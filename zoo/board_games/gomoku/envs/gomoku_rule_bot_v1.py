@@ -7,6 +7,7 @@ play piece to 4-connect to 5-connect.
 """
 
 from collections import defaultdict
+
 import numpy as np
 
 
@@ -311,8 +312,8 @@ class GomokuRuleBotV1(object):
 
             # Combining the scores of each direction into a total action score
             self.action_score[action][4] = (
-                self.action_score[action][0] + self.action_score[action][1] + self.action_score[action][2] +
-                self.action_score[action][3]
+                    self.action_score[action][0] + self.action_score[action][1] + self.action_score[action][2] +
+                    self.action_score[action][3]
             )
 
         action = max(self.legal_actions, key=lambda x: self.action_score[x][4])

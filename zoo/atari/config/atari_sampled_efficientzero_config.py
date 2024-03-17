@@ -51,7 +51,7 @@ atari_sampled_efficientzero_config = dict(
             continuous_action_space=continuous_action_space,
             num_of_sampled_actions=K,
             discrete_action_encoding_type='one_hot',
-            norm_type='BN', 
+            norm_type='BN',
         ),
         cuda=True,
         env_type='not_board_games',
@@ -91,4 +91,5 @@ create_config = atari_sampled_efficientzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=0, max_env_step=max_env_step)

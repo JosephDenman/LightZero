@@ -1,12 +1,12 @@
 import copy
-from typing import TYPE_CHECKING, List, Any, Union
+from typing import List, Any, Union
 
 import numpy as np
 import torch
 from easydict import EasyDict
 
-from lzero.policy import InverseScalarTransform
 from lzero.mcts.ctree.ctree_stochastic_muzero import stochastic_mz_tree
+from lzero.policy import InverseScalarTransform
 
 
 class StochasticMuZeroMCTSCtree(object):

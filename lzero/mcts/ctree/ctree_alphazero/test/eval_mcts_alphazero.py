@@ -11,7 +11,9 @@ import torch
 sys.path.append('./LightZero/lzero/mcts/ctree/ctree_alphazero/build')
 
 import mcts_alphazero
+
 mcts_alphazero = mcts_alphazero.MCTS()
+
 
 def _policy_value_fn(self, env: 'Env') -> Tuple[Dict[int, np.ndarray], float]:  # noqa
     legal_actions = env.legal_actions
@@ -23,6 +25,7 @@ def _policy_value_fn(self, env: 'Env') -> Tuple[Dict[int, np.ndarray], float]:  
         action_probs, value = self._policy_model.compute_policy_value(current_state_scale)
     action_probs_dict = dict(zip(legal_actions, action_probs.squeeze(0)[legal_actions].detach().cpu().numpy()))
     return action_probs_dict, value.item()
+
 
 action, mcts_probs = mcts_alphazero.get_next_action(
     simulate_env=simulate_env,

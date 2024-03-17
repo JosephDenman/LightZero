@@ -723,7 +723,7 @@ class SampledEfficientZeroPolicy(MuZeroPolicy):
         )
 
         target_policy_entropy = -((target_normalized_visit_count_masked + 1e-6) * (
-                    target_normalized_visit_count_masked + 1e-6).log()).sum(-1).mean()
+                target_normalized_visit_count_masked + 1e-6).log()).sum(-1).mean()
 
         # shape: (batch_size, num_unroll_steps, num_of_sampled_actions, action_dim) -> (batch_size,
         # num_of_sampled_actions, action_dim) e.g. (4, 6, 20, 2) ->  (4, 20, 2)
@@ -931,7 +931,7 @@ class SampledEfficientZeroPolicy(MuZeroPolicy):
         else:
             self._mcts_eval = MCTSPtree(self._cfg)
 
-    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: -1, ready_env_id: np.array = None,):
+    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: -1, ready_env_id: np.array = None, ):
         """
          Overview:
              The forward function for evaluating the current policy in eval mode. Use model to execute MCTS search.

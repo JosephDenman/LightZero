@@ -11,7 +11,6 @@ from lzero.policy import InverseScalarTransform, to_detach_cpu_numpy
 if TYPE_CHECKING:
     import lzero.mcts.ptree.ptree_sez as ptree
 
-
 import lzero.mcts.ptree.ptree_sez as tree_sez
 
 
@@ -161,7 +160,8 @@ class SampledEfficientZeroMCTSPtree(object):
                 else:
                     # the ``to_play_batch`` is only used in board games, here we need to deepcopy it to avoid changing the original data.
                     latent_state_index_in_search_path, latent_state_index_in_batch, last_actions, virtual_to_play_batch = tree_sez.batch_traverse(
-                        roots, pb_c_base, pb_c_init, discount_factor, min_max_stats_lst, results, copy.deepcopy(to_play_batch),
+                        roots, pb_c_base, pb_c_init, discount_factor, min_max_stats_lst, results,
+                        copy.deepcopy(to_play_batch),
                         self._cfg.model.continuous_action_space
                     )
                 # obtain the search horizon for leaf nodes
@@ -174,8 +174,10 @@ class SampledEfficientZeroMCTSPtree(object):
                     hidden_states_h_reward.append(reward_hidden_state_h_batch[ix][0][iy])
 
                 latent_states = torch.from_numpy(np.asarray(latent_states)).to(self._cfg.device)
-                hidden_states_c_reward = torch.from_numpy(np.asarray(hidden_states_c_reward)).to(self._cfg.device).unsqueeze(0)
-                hidden_states_h_reward = torch.from_numpy(np.asarray(hidden_states_h_reward)).to(self._cfg.device).unsqueeze(0)
+                hidden_states_c_reward = torch.from_numpy(np.asarray(hidden_states_c_reward)).to(
+                    self._cfg.device).unsqueeze(0)
+                hidden_states_h_reward = torch.from_numpy(np.asarray(hidden_states_h_reward)).to(
+                    self._cfg.device).unsqueeze(0)
 
                 if self._cfg.model.continuous_action_space is True:
                     # continuous action

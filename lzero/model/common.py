@@ -6,8 +6,9 @@ Overview:
     BTW, users can refer to the unittest of these model templates to learn how to use them.
 """
 import math
-from typing import Optional, Tuple
 from dataclasses import dataclass
+from typing import Optional, Tuple
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -36,8 +37,9 @@ class MZNetworkOutput:
 
 
 class DownSample(nn.Module):
-            
-    def __init__(self, observation_shape: SequenceType, out_channels: int, activation: nn.Module = nn.ReLU(inplace=True),
+
+    def __init__(self, observation_shape: SequenceType, out_channels: int,
+                 activation: nn.Module = nn.ReLU(inplace=True),
                  norm_type: Optional[str] = 'BN',
                  ) -> None:
         """
@@ -182,10 +184,11 @@ class RepresentationNetwork(nn.Module):
                 self.norm = nn.BatchNorm2d(num_channels)
             elif norm_type == 'LN':
                 if downsample:
-                    self.norm = nn.LayerNorm([num_channels, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
+                    self.norm = nn.LayerNorm(
+                        [num_channels, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
                 else:
                     self.norm = nn.LayerNorm([num_channels, observation_shape[-2], observation_shape[-1]])
-            
+
         self.resblocks = nn.ModuleList(
             [
                 ResBlock(
@@ -339,18 +342,20 @@ class PredictionNetwork(nn.Module):
 
         self.conv1x1_value = nn.Conv2d(num_channels, value_head_channels, 1)
         self.conv1x1_policy = nn.Conv2d(num_channels, policy_head_channels, 1)
-        
+
         if norm_type == 'BN':
             self.norm_value = nn.BatchNorm2d(value_head_channels)
             self.norm_policy = nn.BatchNorm2d(policy_head_channels)
         elif norm_type == 'LN':
             if downsample:
-                self.norm_value = nn.LayerNorm([value_head_channels, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
-                self.norm_policy = nn.LayerNorm([policy_head_channels, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
+                self.norm_value = nn.LayerNorm(
+                    [value_head_channels, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
+                self.norm_policy = nn.LayerNorm([policy_head_channels, math.ceil(observation_shape[-2] / 16),
+                                                 math.ceil(observation_shape[-1] / 16)])
             else:
                 self.norm_value = nn.LayerNorm([value_head_channels, observation_shape[-2], observation_shape[-1]])
                 self.norm_policy = nn.LayerNorm([policy_head_channels, observation_shape[-2], observation_shape[-1]])
-        
+
         self.flatten_output_size_for_value_head = flatten_output_size_for_value_head
         self.flatten_output_size_for_policy_head = flatten_output_size_for_policy_head
         self.activation = activation

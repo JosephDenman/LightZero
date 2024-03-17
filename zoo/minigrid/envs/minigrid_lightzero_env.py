@@ -6,12 +6,12 @@ from typing import List, Optional
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
-from ding.envs import BaseEnv, BaseEnvTimestep
+from ding.envs import BaseEnvTimestep
 from ding.envs import ObsPlusPrevActRewWrapper
 from ding.torch_utils import to_ndarray
 from ding.utils import ENV_REGISTRY
-from dizoo.minigrid.envs.minigrid_wrapper import ViewSizeWrapper
 from dizoo.minigrid.envs.minigrid_env import MiniGridEnv
+from dizoo.minigrid.envs.minigrid_wrapper import ViewSizeWrapper
 from easydict import EasyDict
 from matplotlib import animation
 from minigrid.wrappers import FlatObsWrapper
@@ -101,7 +101,7 @@ class MiniGridEnvLightZero(MiniGridEnv):
                 self._env = ObsPlusPrevActRewWrapper(self._env)
             self._init_flag = True
         if self._flat_obs:
-            self._observation_space = gym.spaces.Box(0, 1, shape=(2835, ))
+            self._observation_space = gym.spaces.Box(0, 1, shape=(2835,))
         else:
             self._observation_space = self._env.observation_space
             # to be compatible with subprocess env manager
@@ -111,7 +111,7 @@ class MiniGridEnvLightZero(MiniGridEnv):
                 self._observation_space.dtype = np.dtype('float32')
         self._action_space = self._env.action_space
         self._reward_space = gym.spaces.Box(
-            low=self._env.reward_range[0], high=self._env.reward_range[1], shape=(1, ), dtype=np.float32
+            low=self._env.reward_range[0], high=self._env.reward_range[1], shape=(1,), dtype=np.float32
         )
         if hasattr(self, '_seed') and hasattr(self, '_dynamic_seed') and self._dynamic_seed:
             np_seed = 100 * np.random.randint(1, 1000)
@@ -166,7 +166,7 @@ class MiniGridEnvLightZero(MiniGridEnv):
             - An action mask is created with ones, which represents the availability of each action in the action space.
             - Observations are returned in a dictionary format containing 'observation', 'action_mask', and 'to_play'.
         """
-        if isinstance(action, np.ndarray) and action.shape == (1, ):
+        if isinstance(action, np.ndarray) and action.shape == (1,):
             action = action.squeeze()  # 0-dim array
         if self._save_replay_gif:
             self._frames.append(self._env.render())

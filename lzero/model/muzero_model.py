@@ -2,9 +2,9 @@
 Overview:
     BTW, users can refer to the unittest of these model templates to learn how to use them.
 """
+import math
 from typing import Optional, Tuple
 
-import math
 import torch
 import torch.nn as nn
 from ding.torch_utils import MLP, ResBlock
@@ -20,33 +20,33 @@ from .utils import renormalize, get_params_mean, get_dynamic_mean, get_reward_me
 class MuZeroModel(nn.Module):
 
     def __init__(
-        self,
-        observation_shape: SequenceType = (12, 96, 96),
-        action_space_size: int = 6,
-        num_res_blocks: int = 1,
-        num_channels: int = 64,
-        reward_head_channels: int = 16,
-        value_head_channels: int = 16,
-        policy_head_channels: int = 16,
-        fc_reward_layers: SequenceType = [32],
-        fc_value_layers: SequenceType = [32],
-        fc_policy_layers: SequenceType = [32],
-        reward_support_size: int = 601,
-        value_support_size: int = 601,
-        proj_hid: int = 1024,
-        proj_out: int = 1024,
-        pred_hid: int = 512,
-        pred_out: int = 1024,
-        self_supervised_learning_loss: bool = False,
-        categorical_distribution: bool = True,
-        activation: nn.Module = nn.ReLU(inplace=True),
-        last_linear_layer_init_zero: bool = True,
-        state_norm: bool = False,
-        downsample: bool = False,
-        norm_type: Optional[str] = 'BN',
-        discrete_action_encoding_type: str = 'one_hot',
-        *args,
-        **kwargs
+            self,
+            observation_shape: SequenceType = (12, 96, 96),
+            action_space_size: int = 6,
+            num_res_blocks: int = 1,
+            num_channels: int = 64,
+            reward_head_channels: int = 16,
+            value_head_channels: int = 16,
+            policy_head_channels: int = 16,
+            fc_reward_layers: SequenceType = [32],
+            fc_value_layers: SequenceType = [32],
+            fc_policy_layers: SequenceType = [32],
+            reward_support_size: int = 601,
+            value_support_size: int = 601,
+            proj_hid: int = 1024,
+            proj_out: int = 1024,
+            pred_hid: int = 512,
+            pred_out: int = 1024,
+            self_supervised_learning_loss: bool = False,
+            categorical_distribution: bool = True,
+            activation: nn.Module = nn.ReLU(inplace=True),
+            last_linear_layer_init_zero: bool = True,
+            state_norm: bool = False,
+            downsample: bool = False,
+            norm_type: Optional[str] = 'BN',
+            discrete_action_encoding_type: str = 'one_hot',
+            *args,
+            **kwargs
     ):
         """
         Overview:
@@ -408,19 +408,19 @@ class MuZeroModel(nn.Module):
 class DynamicsNetwork(nn.Module):
 
     def __init__(
-        self,
-        observation_shape: SequenceType,
-        action_encoding_dim: int = 2,
-        num_res_blocks: int = 1,
-        num_channels: int = 64,
-        reward_head_channels: int = 64,
-        fc_reward_layers: SequenceType = [32],
-        output_support_size: int = 601,
-        flatten_output_size_for_reward_head: int = 64,
-        downsample: bool = False,
-        last_linear_layer_init_zero: bool = True,
-        activation: Optional[nn.Module] = nn.ReLU(inplace=True),
-        norm_type: Optional[str] = 'BN',
+            self,
+            observation_shape: SequenceType,
+            action_encoding_dim: int = 2,
+            num_res_blocks: int = 1,
+            num_channels: int = 64,
+            reward_head_channels: int = 64,
+            fc_reward_layers: SequenceType = [32],
+            output_support_size: int = 601,
+            flatten_output_size_for_reward_head: int = 64,
+            downsample: bool = False,
+            last_linear_layer_init_zero: bool = True,
+            activation: Optional[nn.Module] = nn.ReLU(inplace=True),
+            norm_type: Optional[str] = 'BN',
     ):
         """
         Overview:
@@ -451,20 +451,25 @@ class DynamicsNetwork(nn.Module):
         self.flatten_output_size_for_reward_head = flatten_output_size_for_reward_head
         self.action_encoding_dim = action_encoding_dim
 
-        self.conv = nn.Conv2d(num_channels, num_channels - self.action_encoding_dim, kernel_size=3, stride=1, padding=1, bias=False)
-        
+        self.conv = nn.Conv2d(num_channels, num_channels - self.action_encoding_dim, kernel_size=3, stride=1, padding=1,
+                              bias=False)
+
         if norm_type == 'BN':
             self.norm_common = nn.BatchNorm2d(num_channels - self.action_encoding_dim)
         elif norm_type == 'LN':
             if downsample:
-                self.norm_common = nn.LayerNorm([num_channels - self.action_encoding_dim, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
+                self.norm_common = nn.LayerNorm(
+                    [num_channels - self.action_encoding_dim, math.ceil(observation_shape[-2] / 16),
+                     math.ceil(observation_shape[-1] / 16)])
             else:
-                self.norm_common = nn.LayerNorm([num_channels - self.action_encoding_dim, observation_shape[-2], observation_shape[-1]])
-            
+                self.norm_common = nn.LayerNorm(
+                    [num_channels - self.action_encoding_dim, observation_shape[-2], observation_shape[-1]])
+
         self.resblocks = nn.ModuleList(
             [
                 ResBlock(
-                    in_channels=num_channels - self.action_encoding_dim, activation=activation, norm_type='BN', res_type='basic', bias=False
+                    in_channels=num_channels - self.action_encoding_dim, activation=activation, norm_type='BN',
+                    res_type='basic', bias=False
                 ) for _ in range(num_res_blocks)
             ]
         )
@@ -475,7 +480,8 @@ class DynamicsNetwork(nn.Module):
             self.norm_reward = nn.BatchNorm2d(reward_head_channels)
         elif norm_type == 'LN':
             if downsample:
-                self.norm_reward = nn.LayerNorm([reward_head_channels, math.ceil(observation_shape[-2] / 16), math.ceil(observation_shape[-1] / 16)])
+                self.norm_reward = nn.LayerNorm([reward_head_channels, math.ceil(observation_shape[-2] / 16),
+                                                 math.ceil(observation_shape[-1] / 16)])
             else:
                 self.norm_reward = nn.LayerNorm([reward_head_channels, observation_shape[-2], observation_shape[-1]])
 

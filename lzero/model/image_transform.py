@@ -1,5 +1,6 @@
-from typing import Tuple, List
 import random
+from typing import Tuple, List
+
 import torch
 import torch.nn as nn
 

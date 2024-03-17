@@ -1,4 +1,5 @@
 from typing import Union
+
 import numpy as np
 import torch
 
@@ -60,7 +61,7 @@ def inverse_scalar_transform(
 
     # h^(-1)(.) function
     output = torch.sign(value) * (
-        ((torch.sqrt(1 + 4 * epsilon * (torch.abs(value) + 1 + epsilon)) - 1) / (2 * epsilon)) ** 2 - 1
+            ((torch.sqrt(1 + 4 * epsilon * (torch.abs(value) + 1 + epsilon)) - 1) / (2 * epsilon)) ** 2 - 1
     )
 
     # TODO(pu): comment this line due to saving time

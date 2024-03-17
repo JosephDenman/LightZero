@@ -89,7 +89,7 @@ cfg = dict(
             gradient_logger=False, video_logger=False, plot_logger=False, action_logger=False, return_logger=False
         ),
     ),
-    create_config = dict(
+    create_config=dict(
         env=dict(
             type='gomoku',
             import_names=['zoo.board_games.gomoku.envs.gomoku_env'],

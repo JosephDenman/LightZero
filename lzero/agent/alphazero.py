@@ -1,7 +1,8 @@
+import copy
 import os
 from functools import partial
 from typing import Optional, Union, List
-import copy
+
 import numpy as np
 import torch
 from ding.bonus.common import TrainingReturn, EvalReturn
@@ -115,8 +116,8 @@ class AlphaZeroAgent:
         self.env_fn, self.collector_env_cfg, self.evaluator_env_cfg = get_vec_env_setting(self.cfg.env)
 
     def train(
-        self,
-        step: int = int(1e7),
+            self,
+            step: int = int(1e7),
     ) -> TrainingReturn:
         """
         Overview:
@@ -146,7 +147,8 @@ class AlphaZeroAgent:
         learner = BaseLearner(
             self.cfg.policy.learn.learner, self.policy.learn_mode, tb_logger, exp_name=self.cfg.exp_name
         )
-        replay_buffer = create_buffer(self.cfg.policy.other.replay_buffer, tb_logger=tb_logger, exp_name=self.cfg.exp_name)
+        replay_buffer = create_buffer(self.cfg.policy.other.replay_buffer, tb_logger=tb_logger,
+                                      exp_name=self.cfg.exp_name)
 
         # ==============================================================
         # MCTS+RL algorithms related core code
@@ -266,7 +268,6 @@ class AlphaZeroAgent:
             deply_configs[0]['save_replay'] = True
 
         for seed in seed_list:
-
             evaluator_env = create_env_manager(self.cfg.env.manager, [partial(self.env_fn, cfg=deply_configs[0])])
 
             evaluator_env.seed(seed if seed is not None else self.cfg.seed, dynamic_seed=False)
@@ -314,8 +315,8 @@ class AlphaZeroAgent:
         return EvalReturn(eval_value=np.mean(reward_list), eval_value_std=np.std(reward_list))
 
     def batch_evaluate(
-        self,
-        n_evaluator_episode: int = None,
+            self,
+            n_evaluator_episode: int = None,
     ) -> EvalReturn:
         """
         Overview:

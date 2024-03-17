@@ -1,4 +1,5 @@
 from easydict import EasyDict
+
 from . import gomoku_play_with_bot
 from . import tictactoe_play_with_bot
 

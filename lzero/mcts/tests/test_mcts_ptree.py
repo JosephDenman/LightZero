@@ -1,9 +1,10 @@
+import numpy as np
 import pytest
 import torch
 from easydict import EasyDict
-from lzero.policy import inverse_scalar_transform, select_action
-import numpy as np
+
 from lzero.mcts.tree_search.mcts_ptree import EfficientZeroMCTSPtree as MCTSPtree
+from lzero.policy import inverse_scalar_transform, select_action
 
 
 class MuZeroModelFake(torch.nn.Module):
@@ -142,7 +143,7 @@ def test_mcts_vs_bot():
     roots_distributions = roots.get_distributions()
     roots_values = roots.get_values()
     assert np.array(roots_distributions).shape == (batch_size, action_space_size)
-    assert np.array(roots_values).shape == (batch_size, )
+    assert np.array(roots_values).shape == (batch_size,)
 
 
 @pytest.mark.unittest
@@ -159,7 +160,7 @@ def test_mcts_to_play_vs_bot():
     roots_distributions = roots.get_distributions()
     roots_values = roots.get_values()
     assert np.array(roots_distributions).shape == (batch_size, action_space_size)
-    assert np.array(roots_values).shape == (batch_size, )
+    assert np.array(roots_values).shape == (batch_size,)
 
 
 @pytest.mark.unittest
@@ -239,7 +240,7 @@ def test_mcts_self_play():
     roots_distributions = roots.get_distributions()
     roots_values = roots.get_values()
     assert np.array(roots_distributions).shape == (batch_size, action_space_size)
-    assert np.array(roots_values).shape == (batch_size, )
+    assert np.array(roots_values).shape == (batch_size,)
 
 
 @pytest.mark.unittest

@@ -2,9 +2,9 @@
 Overview:
     BTW, users can refer to the unittest of these model templates to learn how to use them.
 """
+import math
 from typing import Optional, Tuple
 
-import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -20,31 +20,31 @@ from .common import RepresentationNetwork
 class AlphaZeroModel(nn.Module):
 
     def __init__(
-        self,
-        observation_shape: SequenceType = (12, 96, 96),
-        action_space_size: int = 6,
-        categorical_distribution: bool = False,
-        activation: Optional[nn.Module] = nn.ReLU(inplace=True),
-        representation_network: nn.Module = None,
-        last_linear_layer_init_zero: bool = True,
-        downsample: bool = False,
-        num_res_blocks: int = 1,
-        num_channels: int = 64,
-        value_head_channels: int = 16,
-        policy_head_channels: int = 16,
-        fc_value_layers: SequenceType = [32],
-        fc_policy_layers: SequenceType = [32],
-        value_support_size: int = 601,
-        # ==============================================================
-        # specific sampled related config
-        # ==============================================================
-        continuous_action_space: bool = False,
-        num_of_sampled_actions: int = 6,
-        sigma_type='conditioned',
-        fixed_sigma_value: float = 0.3,
-        bound_type: str = None,
-        norm_type: str = 'BN',
-        discrete_action_encoding_type: str = 'one_hot',
+            self,
+            observation_shape: SequenceType = (12, 96, 96),
+            action_space_size: int = 6,
+            categorical_distribution: bool = False,
+            activation: Optional[nn.Module] = nn.ReLU(inplace=True),
+            representation_network: nn.Module = None,
+            last_linear_layer_init_zero: bool = True,
+            downsample: bool = False,
+            num_res_blocks: int = 1,
+            num_channels: int = 64,
+            value_head_channels: int = 16,
+            policy_head_channels: int = 16,
+            fc_value_layers: SequenceType = [32],
+            fc_policy_layers: SequenceType = [32],
+            value_support_size: int = 601,
+            # ==============================================================
+            # specific sampled related config
+            # ==============================================================
+            continuous_action_space: bool = False,
+            num_of_sampled_actions: int = 6,
+            sigma_type='conditioned',
+            fixed_sigma_value: float = 0.3,
+            bound_type: str = None,
+            norm_type: str = 'BN',
+            discrete_action_encoding_type: str = 'one_hot',
     ):
         """
         Overview:
@@ -104,15 +104,15 @@ class AlphaZeroModel(nn.Module):
         # TODO use more adaptive way to get the flatten output size
         flatten_output_size_for_value_head = (
             (
-                value_head_channels * math.ceil(self.observation_shape[1] / 16) *
-                math.ceil(self.observation_shape[2] / 16)
+                    value_head_channels * math.ceil(self.observation_shape[1] / 16) *
+                    math.ceil(self.observation_shape[2] / 16)
             ) if downsample else (value_head_channels * self.observation_shape[1] * self.observation_shape[2])
         )
 
         flatten_output_size_for_policy_head = (
             (
-                policy_head_channels * math.ceil(self.observation_shape[1] / 16) *
-                math.ceil(self.observation_shape[2] / 16)
+                    policy_head_channels * math.ceil(self.observation_shape[1] / 16) *
+                    math.ceil(self.observation_shape[2] / 16)
             ) if downsample else (policy_head_channels * self.observation_shape[1] * self.observation_shape[2])
         )
 

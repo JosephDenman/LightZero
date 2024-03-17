@@ -63,8 +63,9 @@ class TestMuZeroModel:
         prediction_network_args
     )
     def test_prediction_network(
-        self, action_space_size, batch_size, num_res_blocks, num_channels, value_head_channels, policy_head_channels,
-        fc_value_layers, fc_policy_layers, output_support_size
+            self, action_space_size, batch_size, num_res_blocks, num_channels, value_head_channels,
+            policy_head_channels,
+            fc_value_layers, fc_policy_layers, output_support_size
     ):
         obs = torch.rand(batch_size, num_channels, 3, 3)
         flatten_output_size_for_value_head = value_head_channels * observation_shape[1] * observation_shape[2]
@@ -95,8 +96,8 @@ class TestMuZeroModel:
         'flatten_output_size_for_reward_head', dynamics_network_args
     )
     def test_dynamics_network(
-        self, batch_size, num_res_blocks, num_channels, reward_head_channels, fc_reward_layers, output_support_size,
-        flatten_output_size_for_reward_head
+            self, batch_size, num_res_blocks, num_channels, reward_head_channels, fc_reward_layers, output_support_size,
+            flatten_output_size_for_reward_head
     ):
         observation_shape = [1, 3, 3]
         action_space_size = 1

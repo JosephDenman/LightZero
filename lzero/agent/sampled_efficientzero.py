@@ -20,8 +20,8 @@ from lzero.agent.config.sampled_efficientzero import supported_env_cfg
 from lzero.entry.utils import log_buffer_memory_usage, random_collect
 from lzero.mcts import SampledEfficientZeroGameBuffer
 from lzero.policy import visit_count_temperature
-from lzero.policy.sampled_efficientzero import SampledEfficientZeroPolicy
 from lzero.policy.random_policy import LightZeroRandomPolicy
+from lzero.policy.sampled_efficientzero import SampledEfficientZeroPolicy
 from lzero.worker import MuZeroCollector as Collector
 from lzero.worker import MuZeroEvaluator as Evaluator
 
@@ -93,7 +93,8 @@ class SampledEfficientZeroAgent:
             cfg.main_config.exp_name = exp_name
         self.origin_cfg = cfg
         self.cfg = compile_config(
-            cfg.main_config, seed=seed, env=None, auto=True, policy=SampledEfficientZeroPolicy, create_cfg=cfg.create_config
+            cfg.main_config, seed=seed, env=None, auto=True, policy=SampledEfficientZeroPolicy,
+            create_cfg=cfg.create_config
         )
         self.exp_name = self.cfg.exp_name
 
@@ -124,8 +125,8 @@ class SampledEfficientZeroAgent:
         self.env_fn, self.collector_env_cfg, self.evaluator_env_cfg = get_vec_env_setting(self.cfg.env)
 
     def train(
-        self,
-        step: int = int(1e7),
+            self,
+            step: int = int(1e7),
     ) -> TrainingReturn:
         """
         Overview:
@@ -306,7 +307,6 @@ class SampledEfficientZeroAgent:
             deply_configs[0]['save_replay'] = True
 
         for seed in seed_list:
-
             evaluator_env = create_env_manager(self.cfg.env.manager, [partial(self.env_fn, cfg=deply_configs[0])])
 
             evaluator_env.seed(seed if seed is not None else self.cfg.seed, dynamic_seed=False)
@@ -356,8 +356,8 @@ class SampledEfficientZeroAgent:
         return EvalReturn(eval_value=np.mean(reward_list), eval_value_std=np.std(reward_list))
 
     def batch_evaluate(
-        self,
-        n_evaluator_episode: int = None,
+            self,
+            n_evaluator_episode: int = None,
     ) -> EvalReturn:
         """
         Overview:

@@ -71,7 +71,8 @@ class GameBuffer(ABC, object):
 
     @abstractmethod
     def sample(
-            self, batch_size: int, policy: Union["MuZeroPolicy", "EfficientZeroPolicy", "SampledEfficientZeroPolicy", "GumbelMuZeroPolicy"]
+            self, batch_size: int,
+            policy: Union["MuZeroPolicy", "EfficientZeroPolicy", "SampledEfficientZeroPolicy", "GumbelMuZeroPolicy"]
     ) -> List[Any]:
         """
         Overview:
@@ -150,7 +151,7 @@ class GameBuffer(ABC, object):
         return orig_data
 
     def _preprocess_to_play_and_action_mask(
-        self, game_segment_batch_size, to_play_segment, action_mask_segment, pos_in_game_segment_list
+            self, game_segment_batch_size, to_play_segment, action_mask_segment, pos_in_game_segment_list
     ):
         """
         Overview:
@@ -162,7 +163,7 @@ class GameBuffer(ABC, object):
         for bs in range(game_segment_batch_size):
             to_play_tmp = list(
                 to_play_segment[bs][pos_in_game_segment_list[bs]:pos_in_game_segment_list[bs] +
-                                    self._cfg.num_unroll_steps + 1]
+                                                                 self._cfg.num_unroll_steps + 1]
             )
             if len(to_play_tmp) < self._cfg.num_unroll_steps + 1:
                 # NOTE: the effective to play index is {1,2}, for null padding data, we set to_play=-1
@@ -178,7 +179,7 @@ class GameBuffer(ABC, object):
         for bs in range(game_segment_batch_size):
             action_mask_tmp = list(
                 action_mask_segment[bs][pos_in_game_segment_list[bs]:pos_in_game_segment_list[bs] +
-                                        self._cfg.num_unroll_steps + 1]
+                                                                     self._cfg.num_unroll_steps + 1]
             )
             if len(action_mask_tmp) < self._cfg.num_unroll_steps + 1:
                 action_mask_tmp += [

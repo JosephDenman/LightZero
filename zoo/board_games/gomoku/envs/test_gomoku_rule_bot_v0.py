@@ -124,7 +124,6 @@ class TestExpertActionV0:
                     print('=' * 20)
                     break
 
-
 # test = TestExpertActionV0()
 # test.test_v0_vs_v1()
 # test.test_naive()

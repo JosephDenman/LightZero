@@ -10,13 +10,11 @@ Overview:
     instead, the value output by the neural network is used, which saves the depth of the search.
 """
 
-import copy
 import math
 from typing import List, Tuple, Union, Callable, Type, Dict, Any
 
 import numpy as np
 import torch
-import torch.nn as nn
 from ding.envs import BaseEnv
 from easydict import EasyDict
 
@@ -220,9 +218,9 @@ class MCTS(object):
         root = Node()
 
         self.simulate_env.reset(
-                start_player_index=state_config_for_simulate_env_reset.start_player_index,
-                init_state=state_config_for_simulate_env_reset.init_state,
-            )
+            start_player_index=state_config_for_simulate_env_reset.start_player_index,
+            init_state=state_config_for_simulate_env_reset.init_state,
+        )
         # Expand the root node by adding children to it.
         self._expand_leaf_node(root, self.simulate_env, policy_forward_fn)
 
@@ -261,7 +259,7 @@ class MCTS(object):
         # Calculate the action probabilities based on the visit counts and temperature.
         # When the visit count of a node is 0, then the corresponding action probability will be 0 in order to prevent the selection of illegal actions.
         visits_t = torch.as_tensor(visits, dtype=torch.float32)
-        visits_t = torch.pow(visits_t, 1/temperature)
+        visits_t = torch.pow(visits_t, 1 / temperature)
         action_probs = (visits_t / visits_t.sum()).numpy()
 
         # action_probs = nn.functional.softmax(1.0 / temperature * np.log(torch.as_tensor(visits) + 1e-10), dim=0).numpy()

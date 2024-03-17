@@ -378,7 +378,7 @@ def test_tictactoe_mcts_bot_vs_alphabeta_bot(num_simulations=50):
             if player_index == 0:
                 t1 = time.time()
                 # action = env.mcts_bot()
-                action = player.get_actions(state, player_index=player_index, best_action_type = "most_visit")
+                action = player.get_actions(state, player_index=player_index, best_action_type="most_visit")
                 t2 = time.time()
                 # print("The time difference is :", t2-t1)
                 # mcts_bot_time_list.append(t2 - t1)
@@ -475,7 +475,7 @@ def test_gomoku_mcts_bot_vs_rule_bot_v0_bot(num_simulations=50):
                 # print("The time difference is :", t2-t1)
                 mcts_bot_time_list.append(t2 - t1)
                 player_index = 1
-            
+
             # Set mcts_bot to be player 2.
             else:
                 t1 = time.time()

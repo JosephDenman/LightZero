@@ -1,12 +1,10 @@
 from itertools import product
 
 import gym
-import numpy as np
-from easydict import EasyDict
-
 from ding.envs import BaseEnvTimestep
 from ding.torch_utils import to_ndarray
 from ding.utils import ENV_WRAPPER_REGISTRY
+from easydict import EasyDict
 
 
 @ENV_WRAPPER_REGISTRY.register('action_discretization_env_wrapper')

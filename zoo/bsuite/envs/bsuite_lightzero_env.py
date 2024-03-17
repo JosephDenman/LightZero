@@ -1,12 +1,12 @@
 import copy
 import os
 from datetime import datetime
-from typing import Union, Optional, Dict, List
+from typing import Optional, Dict, List
 
+import bsuite
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
-import bsuite
 from bsuite import sweep
 from bsuite.utils import gym_wrapper
 from ding.envs import BaseEnv, BaseEnvTimestep
@@ -48,7 +48,7 @@ class BSuiteEnv(BaseEnv):
         cfg = EasyDict(copy.deepcopy(cls.config))
         cfg.cfg_type = cls.__name__ + 'Dict'
         return cfg
-    
+
     def __init__(self, cfg: dict = {}) -> None:
         """
         Initialize the environment with a configuration dictionary. Sets up spaces for observations, actions, and rewards.
@@ -103,7 +103,6 @@ class BSuiteEnv(BaseEnv):
 
         return obs
 
-
     def step(self, action: np.ndarray) -> BaseEnvTimestep:
         """
         Overview:
@@ -154,7 +153,7 @@ class BSuiteEnv(BaseEnv):
         config_info = sweep.SETTINGS[self._env_id]  # additional info that are specific to each env configuration
         config_info['num_episodes'] = self._env.bsuite_num_episodes
         return config_info
-    
+
     def close(self) -> None:
         """
         Close the environment, and set the initialization flag to False.

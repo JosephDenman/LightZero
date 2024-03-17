@@ -1,6 +1,7 @@
-from easydict import EasyDict
-import pytest
 import time
+
+import pytest
+from easydict import EasyDict
 
 from zoo.board_games.alphabeta_pruning_bot import AlphaBetaPruningBot
 from zoo.board_games.gomoku.envs.gomoku_env import GomokuEnv

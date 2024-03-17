@@ -9,12 +9,13 @@ Overview:
     For more details, you can refer to: https://github.com/int8/monte-carlo-tree-search.
 """
 
+import copy
 import time
 from abc import ABC, abstractmethod
 from collections import defaultdict
 
 import numpy as np
-import copy
+
 
 class MCTSNode(ABC):
     """
@@ -173,7 +174,7 @@ class TwoPlayersMCTSNode(MCTSNode):
 
         # Determine the number of wins and losses based on the current player at the parent node.
         wins, loses = (self._results[1], self._results[-1]) if self.parent.env.current_player == 1 else (
-        self._results[-1], self._results[1])
+            self._results[-1], self._results[1])
 
         # Calculate and return the Q-value as the difference between wins and losses.
         return wins - loses

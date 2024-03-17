@@ -17,7 +17,6 @@ import numpy as np
 import torch
 from ding.envs import BaseEnv
 from easydict import EasyDict
-from numpy import ndarray
 
 from lzero.mcts.ptree.ptree_sez import Action
 

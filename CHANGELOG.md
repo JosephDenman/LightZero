@@ -1,4 +1,5 @@
 2024.02.08 (v0.0.4)
+
 - polish: add agent configurations & polish replay video saving method (#184)
 - polish: polish comments in worker files
 - polish: polish comments in tree search files (#185)
@@ -12,6 +13,7 @@
 - fix: fix action_mask in bipedalwalker_cont_disc_env, fix device bug in sampled efficientzero (#168)
 
 2023.12.07 (v0.0.3)
+
 - env: MiniGrid env (#110)
 - env: Bsuite env (#110)
 - env: GoBigger env (#39)
@@ -25,7 +27,7 @@
 - feature: add muzero config for connect4 (#107)
 - feature: added CONTRIBUTING.md (#119)
 - feature: added .gitpod.yml and .gitpod.Dockerfile (#123)
-- feature: added contributors subsection in README (#132) 
+- feature: added contributors subsection in README (#132)
 - feature: added CODE_OF_CONDUCT.md (#127)
 - polish: refine comments and render_eval configs for various common envs (#154) (#161)
 - polish: polish action_type and env_type, fix test.yml, fix unittest (#160)
@@ -46,6 +48,7 @@
 - style: add nips2023 paper link
 
 2023.09.21 (v0.0.2)
+
 - env: MuJoCo env (#50)
 - env: 2048 env (#64)
 - env: Connect4 env (#63)

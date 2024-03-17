@@ -5,7 +5,6 @@ import math
 import random
 from typing import List, Any, Tuple, Union
 
-import numpy as np
 import torch
 from torch.distributions import Normal, Independent
 
@@ -304,6 +303,7 @@ class Roots:
         ``__init__``, ``prepare``,  ``prepare_no_noise``, ``clear``, ``get_trajectories``, \
         ``get_distributions``, ``get_values``
     """
+
     def __init__(
             self,
             root_num: int,
@@ -605,7 +605,7 @@ def compute_ucb_score(
         if continuous_action_space:
             # prior is log_prob
             prior_score = pb_c * (
-                torch.exp(child.prior) / (sum([torch.exp(node.prior) for node in parent.children.values()]) + 1e-6)
+                    torch.exp(child.prior) / (sum([torch.exp(node.prior) for node in parent.children.values()]) + 1e-6)
             )
         else:
             # prior is prob
@@ -631,7 +631,7 @@ def compute_ucb_score(
         value_score = 0
     if value_score > 1:
         value_score = 1
-    
+
     ucb_score = prior_score + value_score
 
     return ucb_score
@@ -796,8 +796,8 @@ def backpropagate(
 
             # true_reward is in the perspective of current player of node
             bootstrap_value = (
-                -true_reward if node.to_play == to_play else true_reward
-            ) + discount_factor * bootstrap_value
+                                  -true_reward if node.to_play == to_play else true_reward
+                              ) + discount_factor * bootstrap_value
 
 
 def batch_backpropagate(
@@ -848,11 +848,13 @@ def batch_backpropagate(
 from typing import Union
 import numpy as np
 
+
 class Action:
     """
     Overview:
         Class that represents an action of the game.
     """
+
     def __init__(self, value: Union[int, np.ndarray]) -> None:
         """
         Overview:

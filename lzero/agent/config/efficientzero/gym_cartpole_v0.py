@@ -16,7 +16,7 @@ reanalyze_ratio = 0.
 # ==============================================================
 
 cfg = dict(
-    main_config = dict(
+    main_config=dict(
         exp_name='CartPole-v0-EfficientZero',
         env=dict(
             env_id='CartPole-v0',
@@ -31,11 +31,11 @@ cfg = dict(
             model=dict(
                 observation_shape=4,
                 action_space_size=2,
-                model_type='mlp', 
+                model_type='mlp',
                 lstm_hidden_size=128,
                 latent_state_dim=128,
                 discrete_action_encoding_type='one_hot',
-                norm_type='BN', 
+                norm_type='BN',
             ),
             cuda=True,
             env_type='not_board_games',

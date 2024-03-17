@@ -1,7 +1,8 @@
 # According to the model you want to evaluate, import the corresponding config.
-from zoo.classic_control.pendulum.config.pendulum_cont_sampled_efficientzero_config import main_config, create_config
-from lzero.entry import eval_muzero
 import numpy as np
+
+from lzero.entry import eval_muzero
+from zoo.classic_control.pendulum.config.pendulum_cont_sampled_efficientzero_config import main_config, create_config
 
 if __name__ == "__main__":
     """
@@ -50,7 +51,8 @@ if __name__ == "__main__":
 
     # Print evaluation results
     print("=" * 20)
-    print(f"We evaluated a total of {len(seeds)} seeds. For each seed, we evaluated {num_episodes_each_seed} episode(s).")
+    print(
+        f"We evaluated a total of {len(seeds)} seeds. For each seed, we evaluated {num_episodes_each_seed} episode(s).")
     print(f"For seeds {seeds}, the mean returns are {returns_mean_seeds}, and the returns are {returns_seeds}.")
     print("Across all seeds, the mean reward is:", returns_mean_seeds.mean())
     print("=" * 20)

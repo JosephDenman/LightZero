@@ -89,6 +89,5 @@ class TestGomokuEnv:
                     print('draw')
                 break
 
-
 # test = TestGomokuEnv()
 # test.test_play_with_bot_mode()

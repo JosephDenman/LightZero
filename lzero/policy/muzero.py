@@ -8,7 +8,6 @@ from ding.model import model_wrap
 from ding.policy.base_policy import Policy
 from ding.torch_utils import to_tensor
 from ding.utils import POLICY_REGISTRY
-from torch.distributions import Categorical
 from torch.nn import L1Loss
 
 from lzero.mcts import MuZeroMCTSCtree as MCTSCtree
@@ -454,7 +453,8 @@ class MuZeroPolicy(Policy):
         weighted_total_loss.backward()
         if self._cfg.multi_gpu:
             self.sync_gradients(self._learn_model)
-        total_grad_norm_before_clip = torch.nn.utils.clip_grad_norm_(self._learn_model.parameters(), self._cfg.grad_clip_value)
+        total_grad_norm_before_clip = torch.nn.utils.clip_grad_norm_(self._learn_model.parameters(),
+                                                                     self._cfg.grad_clip_value)
         self._optimizer.step()
         if self._cfg.lr_piecewise_constant_decay:
             self.lr_scheduler.step()
@@ -646,7 +646,8 @@ class MuZeroPolicy(Policy):
             end_index = self._cfg.model.observation_shape * (step + self._cfg.model.frame_stack_num)
         return beg_index, end_index
 
-    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: int = -1, ready_env_id: np.array = None,) -> Dict:
+    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: int = -1,
+                      ready_env_id: np.array = None, ) -> Dict:
         """
         Overview:
             The forward function for evaluating the current policy in eval mode. Use model to execute MCTS search.

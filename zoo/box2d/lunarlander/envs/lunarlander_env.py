@@ -1,7 +1,7 @@
 import copy
 import os
 from datetime import datetime
-from typing import List, Optional, Dict
+from typing import List, Dict
 
 import gymnasium as gym
 import numpy as np

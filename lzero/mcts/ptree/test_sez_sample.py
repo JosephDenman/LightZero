@@ -1,5 +1,5 @@
-from torch.distributions import Normal, Independent
 import torch
+from torch.distributions import Normal, Independent
 
 # policy_logits = {'mu': torch.randn([1, 2]), 'sigma': abs(torch.randn([1, 2]))}
 policy_logits = {'mu': torch.randn([1, 2]), 'sigma': torch.zeros([1, 2]) + 1e-7}

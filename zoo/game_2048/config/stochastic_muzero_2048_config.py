@@ -1,6 +1,5 @@
 from easydict import EasyDict
 
-
 # ==============================================================
 # begin of the most frequently changed config specified by the user
 # ==============================================================
@@ -87,4 +86,5 @@ create_config = game_2048_stochastic_muzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=0, max_env_step=max_env_step)

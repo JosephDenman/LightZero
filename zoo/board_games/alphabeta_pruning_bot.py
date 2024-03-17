@@ -1,5 +1,6 @@
-from easydict import EasyDict
 import copy
+
+from easydict import EasyDict
 
 
 class Node():
@@ -155,6 +156,7 @@ if __name__ == "__main__":
     import time
     ##### TicTacToe #####
     from zoo.board_games.tictactoe.envs.tictactoe_env import TicTacToeEnv
+
     cfg = dict(
         prob_random_agent=0,
         prob_expert_agent=0,
@@ -267,4 +269,3 @@ if __name__ == "__main__":
     assert env.get_done_winner()[0] is False, env.get_done_winner()[1] == -1
     # assert env.get_done_winner()[0] is True, env.get_done_winner()[1] == 2
     """
-

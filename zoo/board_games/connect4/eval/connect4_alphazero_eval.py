@@ -53,7 +53,8 @@ if __name__ == '__main__':
     returns_seeds = np.array(returns_seeds)
 
     print("=" * 20)
-    print(f"We evaluated a total of {len(seeds)} seeds. For each seed, we evaluated {num_episodes_each_seed} episode(s).")
+    print(
+        f"We evaluated a total of {len(seeds)} seeds. For each seed, we evaluated {num_episodes_each_seed} episode(s).")
     print(f"For seeds {seeds}, the mean returns are {returns_mean_seeds}, and the returns are {returns_seeds}.")
     print("Across all seeds, the mean reward is:", returns_mean_seeds.mean())
     print(

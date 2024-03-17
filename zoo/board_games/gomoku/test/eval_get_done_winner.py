@@ -66,27 +66,32 @@ def get_done_winner_python(board_size, board):
 def eval_get_done_winner_template(get_done_winner_func):
     # case 1
     board_size = 5
-    board = np.array([[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]], dtype=np.int32)
+    board = np.array([[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]],
+                     dtype=np.int32)
     get_done_winner = get_done_winner_func(board_size, board)
 
     # case 2
     board_size = 5
-    board = np.array([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], dtype=np.int32)
+    board = np.array([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],
+                     dtype=np.int32)
     get_done_winner = get_done_winner_func(board_size, board)
 
     # case 3
     board_size = 5
-    board = np.array([[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]], dtype=np.int32)
+    board = np.array([[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]],
+                     dtype=np.int32)
     get_done_winner = get_done_winner_func(board_size, board)
 
     # case 4
     board_size = 5
-    board = np.array([[0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0]], dtype=np.int32)
+    board = np.array([[0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0]],
+                     dtype=np.int32)
     get_done_winner = get_done_winner_func(board_size, board)
 
     # case 4
     board_size = 5
-    board = np.array([[1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1]], dtype=np.int32)
+    board = np.array([[1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1]],
+                     dtype=np.int32)
     get_done_winner = get_done_winner_func(board_size, board)
 
 

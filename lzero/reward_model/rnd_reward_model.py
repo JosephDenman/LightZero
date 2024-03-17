@@ -45,7 +45,8 @@ class RNDNetworkRepr(nn.Module):
         The RND reward model class (https://arxiv.org/abs/1810.12894v1) with representation network.
     """
 
-    def __init__(self, obs_shape: Union[int, SequenceType], latent_shape: Union[int, SequenceType],  hidden_size_list: SequenceType,
+    def __init__(self, obs_shape: Union[int, SequenceType], latent_shape: Union[int, SequenceType],
+                 hidden_size_list: SequenceType,
                  representation_network) -> None:
         super(RNDNetworkRepr, self).__init__()
         self.representation_network = representation_network
@@ -166,11 +167,13 @@ class RNDRewardModel(BaseRewardModel):
             self.reward_model = RNDNetwork(self.input_shape, self.cfg.hidden_size_list).to(self.device)
         elif self.input_type == 'obs_latent_state':
             if self.use_momentum_representation_network:
-                self.reward_model = RNDNetworkRepr(self.cfg.obs_shape, self.cfg.latent_state_dim, self.cfg.hidden_size_list[0:-1],
-                                                  self.target_representation_network).to(self.device)
+                self.reward_model = RNDNetworkRepr(self.cfg.obs_shape, self.cfg.latent_state_dim,
+                                                   self.cfg.hidden_size_list[0:-1],
+                                                   self.target_representation_network).to(self.device)
             else:
-                self.reward_model = RNDNetworkRepr(self.cfg.obs_shape, self.cfg.latent_state_dim, self.cfg.hidden_size_list[0:-1],
-                                                  self.representation_network).to(self.device)
+                self.reward_model = RNDNetworkRepr(self.cfg.obs_shape, self.cfg.latent_state_dim,
+                                                   self.cfg.hidden_size_list[0:-1],
+                                                   self.representation_network).to(self.device)
 
         assert self.intrinsic_reward_type in ['add', 'new', 'assign']
         if self.input_type in ['obs', 'obs_latent_state']:

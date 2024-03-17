@@ -2,9 +2,8 @@ import copy
 from typing import List, Tuple
 
 import numpy as np
-from easydict import EasyDict
-
 from ding.utils.compression_helper import jpeg_data_decompressor
+from easydict import EasyDict
 
 
 class GameSegment:
@@ -57,7 +56,8 @@ class GameSegment:
             self.zero_obs_shape = config.model.observation_shape
         elif len(config.model.observation_shape) == 3:
             # image obs input, e.g. atari environments
-            self.zero_obs_shape = (config.model.image_channel, config.model.observation_shape[-2], config.model.observation_shape[-1])
+            self.zero_obs_shape = (
+            config.model.image_channel, config.model.observation_shape[-2], config.model.observation_shape[-1])
 
         self.obs_segment = []
         self.action_segment = []
@@ -187,7 +187,7 @@ class GameSegment:
 
         for child_visits in next_segment_child_visits:
             self.child_visit_segment.append(child_visits)
-        
+
         if self.gumbel_algo:
             for improved_policy in next_segment_improved_policy:
                 self.improved_policy_probs.append(improved_policy)
@@ -203,7 +203,8 @@ class GameSegment:
         return self.target_values[timestep], self.target_rewards[timestep], self.target_policies[timestep]
 
     def store_search_stats(
-            self, visit_counts: List, root_value: List, root_sampled_actions: List = None, improved_policy: List = None, idx: int = None
+            self, visit_counts: List, root_value: List, root_sampled_actions: List = None, improved_policy: List = None,
+            idx: int = None
     ) -> None:
         """
         Overview:

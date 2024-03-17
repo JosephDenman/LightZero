@@ -1,5 +1,6 @@
 import pytest
 import torch
+
 from lzero.policy.scaling_transform import inverse_scalar_transform, InverseScalarTransform
 
 

@@ -4,13 +4,13 @@ from typing import Optional
 from typing import Tuple
 
 import torch
-from tensorboardX import SummaryWriter
-
 from ding.config import compile_config
 from ding.envs import DingEnvWrapper, BaseEnvManager
 from ding.policy import create_policy
 from ding.utils import set_pkg_seed
 from ding.worker import BaseLearner
+from tensorboardX import SummaryWriter
+
 from lzero.envs.get_wrapped_env import get_wrappered_env
 from lzero.policy import visit_count_temperature
 from lzero.worker import MuZeroCollector, MuZeroEvaluator

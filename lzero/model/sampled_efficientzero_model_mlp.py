@@ -15,38 +15,38 @@ from .utils import renormalize, get_params_mean
 class SampledEfficientZeroModelMLP(nn.Module):
 
     def __init__(
-        self,
-        observation_shape: int = 2,
-        action_space_size: int = 6,
-        latent_state_dim: int = 256,
-        lstm_hidden_size: int = 512,
-        fc_reward_layers: SequenceType = [32],
-        fc_value_layers: SequenceType = [32],
-        fc_policy_layers: SequenceType = [32],
-        reward_support_size: int = 601,
-        value_support_size: int = 601,
-        proj_hid: int = 1024,
-        proj_out: int = 1024,
-        pred_hid: int = 512,
-        pred_out: int = 1024,
-        self_supervised_learning_loss: bool = True,
-        categorical_distribution: bool = True,
-        activation: Optional[nn.Module] = nn.ReLU(inplace=True),
-        last_linear_layer_init_zero: bool = True,
-        state_norm: bool = False,
-        # ==============================================================
-        # specific sampled related config
-        # ==============================================================
-        continuous_action_space: bool = False,
-        num_of_sampled_actions: int = 6,
-        sigma_type='conditioned',
-        fixed_sigma_value: float = 0.3,
-        bound_type: str = None,
-        norm_type: str = 'BN',
-        discrete_action_encoding_type: str = 'one_hot',
-        res_connection_in_dynamics: bool = False,
-        *args,
-        **kwargs,
+            self,
+            observation_shape: int = 2,
+            action_space_size: int = 6,
+            latent_state_dim: int = 256,
+            lstm_hidden_size: int = 512,
+            fc_reward_layers: SequenceType = [32],
+            fc_value_layers: SequenceType = [32],
+            fc_policy_layers: SequenceType = [32],
+            reward_support_size: int = 601,
+            value_support_size: int = 601,
+            proj_hid: int = 1024,
+            proj_out: int = 1024,
+            pred_hid: int = 512,
+            pred_out: int = 1024,
+            self_supervised_learning_loss: bool = True,
+            categorical_distribution: bool = True,
+            activation: Optional[nn.Module] = nn.ReLU(inplace=True),
+            last_linear_layer_init_zero: bool = True,
+            state_norm: bool = False,
+            # ==============================================================
+            # specific sampled related config
+            # ==============================================================
+            continuous_action_space: bool = False,
+            num_of_sampled_actions: int = 6,
+            sigma_type='conditioned',
+            fixed_sigma_value: float = 0.3,
+            bound_type: str = None,
+            norm_type: str = 'BN',
+            discrete_action_encoding_type: str = 'one_hot',
+            res_connection_in_dynamics: bool = False,
+            *args,
+            **kwargs,
     ):
         """
         Overview:
@@ -389,23 +389,23 @@ class SampledEfficientZeroModelMLP(nn.Module):
 class PredictionNetworkMLP(nn.Module):
 
     def __init__(
-        self,
-        continuous_action_space,
-        action_space_size,
-        num_channels,
-        common_layer_num: int = 2,
-        fc_value_layers: SequenceType = [32],
-        fc_policy_layers: SequenceType = [32],
-        output_support_size: int = 601,
-        last_linear_layer_init_zero: bool = True,
-        activation: Optional[nn.Module] = nn.ReLU(inplace=True),
-        # ==============================================================
-        # specific sampled related config
-        # ==============================================================
-        sigma_type='conditioned',
-        fixed_sigma_value: float = 0.3,
-        bound_type: str = None,
-        norm_type: str = 'BN',
+            self,
+            continuous_action_space,
+            action_space_size,
+            num_channels,
+            common_layer_num: int = 2,
+            fc_value_layers: SequenceType = [32],
+            fc_policy_layers: SequenceType = [32],
+            output_support_size: int = 601,
+            last_linear_layer_init_zero: bool = True,
+            activation: Optional[nn.Module] = nn.ReLU(inplace=True),
+            # ==============================================================
+            # specific sampled related config
+            # ==============================================================
+            sigma_type='conditioned',
+            fixed_sigma_value: float = 0.3,
+            bound_type: str = None,
+            norm_type: str = 'BN',
     ):
         """
         Overview:

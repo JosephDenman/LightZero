@@ -1,12 +1,15 @@
-import torch
 import pytest
+import torch
 from torch import nn
+
 from lzero.model.stochastic_muzero_model import ChanceEncoder
+
 
 # Initialize a ChanceEncoder instance for testing
 @pytest.fixture
 def encoder():
     return ChanceEncoder((3, 32, 32), 4)
+
 
 def test_ChanceEncoder(encoder):
     # Create a dummy tensor for testing
@@ -22,7 +25,8 @@ def test_ChanceEncoder(encoder):
     # Check that chance_onehot_t is indeed one-hot
     assert torch.all((chance_onehot_t == 0) | (chance_onehot_t == 1))
     assert torch.all(torch.sum(chance_onehot_t, dim=1) == 1)
-    
+
+
 def test_ChanceEncoder_gradients_chance_encoding(encoder):
     # Create a dummy tensor for testing
     x_and_last_x = torch.randn(1, 6, 32, 32)
@@ -46,6 +50,7 @@ def test_ChanceEncoder_gradients_chance_encoding(encoder):
     # Check if gradients have the correct shape
     for param in encoder.parameters():
         assert param.grad.shape == param.shape
+
 
 def test_ChanceEncoder_gradients_chance_onehot_t(encoder):
     # Create a dummy tensor for testing

@@ -6,6 +6,7 @@ from zoo.board_games.gomoku.envs.gomoku_env import GomokuEnv
 
 timer = EasyTimer(cuda=True)
 
+
 @pytest.mark.envtest
 class TestGomokuEnv:
 
@@ -44,7 +45,7 @@ class TestGomokuEnv:
             with timer:
                 legal_actions = env.legal_actions_cython_lru
             gomoku_env_legal_actions_cython_lru += timer.value
-            
+
             obs, reward, done, info = env.step(action)
             env.render()
             if done:

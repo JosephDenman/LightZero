@@ -89,7 +89,7 @@ class PendulumEnv(CartPoleEnv):
             self._seed = self._seed + np_seed
             self._action_space.seed(self._seed)
             obs, _ = self._env.reset(seed=self._seed)
-        elif hasattr(self, '_seed'): 
+        elif hasattr(self, '_seed'):
             self._action_space.seed(self._seed)
             obs, _ = self._env.reset(seed=self._seed)
         else:

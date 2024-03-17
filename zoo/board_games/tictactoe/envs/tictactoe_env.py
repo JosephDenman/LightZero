@@ -38,7 +38,6 @@ def _get_done_winner_func_lru(board_tuple):
 
 @ENV_REGISTRY.register('tictactoe')
 class TicTacToeEnv(BaseEnv):
-
     config = dict(
         # env_id (str): The name of the environment.
         env_id="TicTacToe",

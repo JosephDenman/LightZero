@@ -64,8 +64,9 @@ class TestSampledEfficientZeroModel:
         prediction_network_args
     )
     def test_prediction_network(
-        self, action_space_size, batch_size, num_res_blocks, num_channels, value_head_channels, policy_head_channels,
-        fc_value_layers, fc_policy_layers, output_support_size
+            self, action_space_size, batch_size, num_res_blocks, num_channels, value_head_channels,
+            policy_head_channels,
+            fc_value_layers, fc_policy_layers, output_support_size
     ):
         obs = torch.rand(batch_size, num_channels, 3, 3)
         flatten_output_size_for_value_head = value_head_channels * observation_shape[1] * observation_shape[2]
@@ -94,8 +95,8 @@ class TestSampledEfficientZeroModel:
         'flatten_output_size_for_reward_head', dynamics_network_args
     )
     def test_dynamics_network(
-        self, batch_size, num_res_blocks, num_channels, lstm_hidden_size, action_space_size, reward_head_channels,
-        fc_reward_layers, output_support_size, flatten_output_size_for_reward_head
+            self, batch_size, num_res_blocks, num_channels, lstm_hidden_size, action_space_size, reward_head_channels,
+            fc_reward_layers, output_support_size, flatten_output_size_for_reward_head
     ):
         print('=' * 20)
         print(

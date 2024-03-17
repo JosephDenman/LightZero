@@ -141,11 +141,11 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
             # sampled related core code
             # ==============================================================
             actions_tmp = game.action_segment[pos_in_game_segment:pos_in_game_segment +
-                                              self._cfg.num_unroll_steps].tolist()
+                                                                  self._cfg.num_unroll_steps].tolist()
 
             # NOTE: self._cfg.num_unroll_steps + 1
             root_sampled_actions_tmp = game.root_sampled_actions[pos_in_game_segment:pos_in_game_segment +
-                                                                 self._cfg.num_unroll_steps + 1]
+                                                                                     self._cfg.num_unroll_steps + 1]
 
             # add mask for invalid actions (out of trajectory), 1 for valid, 0 for invalid
             mask_tmp = [1. for i in range(len(root_sampled_actions_tmp))]
@@ -250,7 +250,7 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
             - batch_target_values (:obj:'np.ndarray): batch of value estimation
         """
         value_obs_list, value_mask, pos_in_game_segment_list, rewards_list, game_segment_lens, td_steps_list, action_mask_segment, \
-        to_play_segment = reward_value_context  # noqa
+            to_play_segment = reward_value_context  # noqa
 
         # transition_batch_size = game_segment_batch_size * (num_unroll_steps+1)
         transition_batch_size = len(value_obs_list)
@@ -325,7 +325,8 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                         self._cfg.model.num_of_sampled_actions, self._cfg.model.continuous_action_space
                     )
                     if self._cfg.reanalyze_noise:
-                        roots.prepare(self._cfg.root_noise_weight, noises, value_prefix_pool, policy_logits_pool, to_play)
+                        roots.prepare(self._cfg.root_noise_weight, noises, value_prefix_pool, policy_logits_pool,
+                                      to_play)
                     else:
                         roots.prepare_no_noise(value_prefix_pool, policy_logits_pool, to_play)
                     # do MCTS for a new policy with the recent target model
@@ -337,7 +338,8 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                         self._cfg.model.num_of_sampled_actions, self._cfg.model.continuous_action_space
                     )
                     if self._cfg.reanalyze_noise:
-                        roots.prepare(self._cfg.root_noise_weight, noises, value_prefix_pool, policy_logits_pool, to_play)
+                        roots.prepare(self._cfg.root_noise_weight, noises, value_prefix_pool, policy_logits_pool,
+                                      to_play)
                     else:
                         roots.prepare_no_noise(value_prefix_pool, policy_logits_pool, to_play)
                     # do MCTS for a new policy with the recent target model
@@ -356,13 +358,14 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                 value_list = value_list.reshape(-1) * np.array(
                     [
                         self._cfg.discount_factor ** td_steps_list[i] if int(td_steps_list[i]) %
-                        2 == 0 else -self._cfg.discount_factor ** td_steps_list[i]
+                                                                         2 == 0 else -self._cfg.discount_factor **
+                                                                                      td_steps_list[i]
                         for i in range(transition_batch_size)
                     ]
                 )
             else:
                 value_list = value_list.reshape(-1) * (
-                    np.array([self._cfg.discount_factor for _ in range(transition_batch_size)]) ** td_steps_list
+                        np.array([self._cfg.discount_factor for _ in range(transition_batch_size)]) ** td_steps_list
                 )
 
             value_list = value_list * np.array(value_mask)
@@ -402,7 +405,7 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                         # Since the horizon is small and the discount_factor is close to 1.
                         # Compute the reward sum to approximate the value prefix for simplification
                         value_prefix += reward_list[current_index
-                                                    ]  # * config.discount_factor ** (current_index - base_index)
+                        ]  # * config.discount_factor ** (current_index - base_index)
                         target_value_prefixs.append(value_prefix)
                     else:
                         target_values.append(0)
@@ -432,7 +435,7 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
         batch_target_policies_re = []
 
         policy_obs_list, policy_mask, pos_in_game_segment_list, batch_index_list, child_visits, root_values, game_segment_lens, action_mask_segment, \
-        to_play_segment = policy_re_context  # noqa
+            to_play_segment = policy_re_context  # noqa
         # transition_batch_size = game_segment_batch_size * (self._cfg.num_unroll_steps + 1)
         transition_batch_size = len(policy_obs_list)
         game_segment_batch_size = len(pos_in_game_segment_list)
@@ -532,7 +535,7 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                 root_sampled_actions = np.array([action.value for action in roots_sampled_actions])
             except Exception:
                 root_sampled_actions = np.array([action for action in roots_sampled_actions])
-            
+
             policy_index = 0
             for state_index, child_visit, root_value in zip(pos_in_game_segment_list, child_visits, root_values):
                 target_policies = []
@@ -560,7 +563,7 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                             # the target policies and root values are stored in the gamesegment, specifically, ``child_visit_segment`` and ``root_value_segment``
                             # we replace the data at the corresponding location with the latest search results to keep the most up-to-date targets
                             sim_num = sum(distributions)
-                            child_visit[current_index] = [visit_count/sim_num for visit_count in distributions]
+                            child_visit[current_index] = [visit_count / sim_num for visit_count in distributions]
                             root_value[current_index] = searched_value
                             if self._cfg.action_type == 'fixed_action_space':
                                 sum_visits = sum(distributions)

@@ -94,7 +94,8 @@ class TestConnect4RuleBot():
                           [1, 2, 2, 1, 0, 0, 2],
                           [1, 2, 2, 2, 1, 0, 0]])
         self.bot.board = board
-        assert self.bot.is_blocking_move(3) is True  # Placing a piece in the 4th column is a move to prevent the opponent from winning.
+        assert self.bot.is_blocking_move(
+            3) is True  # Placing a piece in the 4th column is a move to prevent the opponent from winning.
 
     def test_is_sequence_3_move(self) -> None:
         """
@@ -108,7 +109,8 @@ class TestConnect4RuleBot():
         board[5][4] = self.player
         board[5][5] = self.player
         self.bot.board = board
-        assert self.bot.is_sequence_3_move(3) is True  # Placing a piece in the third column should create a three-in-a-row.
+        assert self.bot.is_sequence_3_move(
+            3) is True  # Placing a piece in the third column should create a three-in-a-row.
 
     def test_is_sequence_2_move(self) -> None:
         """
@@ -122,7 +124,8 @@ class TestConnect4RuleBot():
         board = np.zeros((6, 7))
         board[5][5] = self.player
         self.bot.board = board
-        assert self.bot.is_sequence_2_move(4) is True  # Placing a move in the fourth column should create a two-in-a-row.
+        assert self.bot.is_sequence_2_move(
+            4) is True  # Placing a move in the fourth column should create a two-in-a-row.
 
         # Create a chessboard with one and two consecutive pieces.
         board = np.array([[0, 0, 0, 0, 0, 0, 0],
@@ -133,8 +136,10 @@ class TestConnect4RuleBot():
                           [0, 0, 0, 2, 2, 0, 0]])
         self.bot.board = board
         assert self.bot.is_sequence_2_move(5) is True  # Placing a move in the 5th column should create a two-in-a-row.
-        assert self.bot.is_sequence_2_move(4) is False  # Placing a move in the 5th column should not create a two-in-a-row.
-        assert self.bot.is_sequence_2_move(6) is False  # Placing a move in the 6th column should not create a two-in-a-row.
+        assert self.bot.is_sequence_2_move(
+            4) is False  # Placing a move in the 5th column should not create a two-in-a-row.
+        assert self.bot.is_sequence_2_move(
+            6) is False  # Placing a move in the 6th column should not create a two-in-a-row.
 
     def test_get_action(self) -> None:
         """

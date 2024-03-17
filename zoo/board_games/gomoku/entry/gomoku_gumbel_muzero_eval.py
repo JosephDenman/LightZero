@@ -1,6 +1,7 @@
-from zoo.board_games.gomoku.config.gomoku_muzero_bot_mode_config import main_config, create_config
-from lzero.entry import eval_muzero
 import numpy as np
+
+from lzero.entry import eval_muzero
+from zoo.board_games.gomoku.config.gomoku_muzero_bot_mode_config import main_config, create_config
 
 if __name__ == '__main__':
     """ 
@@ -9,7 +10,7 @@ if __name__ == '__main__':
     In LightZero, the path is usually something like ``exp_name/ckpt/ckpt_best.pth.tar``.
     """
     model_path = './data_mz_ctree/gomoku_gumbel_muzero_visit50_value1_purevaluenetwork_deletepriority_deletetargetsoftmax_seed0_230517_131142/ckpt/iteration_113950.pth.tar'
-    seeds = [0,1,2,3,4]
+    seeds = [0, 1, 2, 3, 4]
     num_episodes_each_seed = 10
     # If True, you can play with the agent.
     main_config.env.agent_vs_human = True

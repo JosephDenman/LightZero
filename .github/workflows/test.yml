@@ -78,7 +78,7 @@ jobs:
           LINETRACE: 1
         shell: bash
         run: |
-            make clean build unittest
+          make clean build unittest
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

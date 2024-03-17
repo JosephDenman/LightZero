@@ -3,7 +3,6 @@ from easydict import EasyDict
 # options={'memory_len/0', 'memory_len/9', 'memory_len/17', 'memory_len/20', 'memory_len/22', 'memory_size/0', 'bsuite_swingup/0', 'bandit_noise/0'}
 env_id = 'memory_len/9'
 
-
 if env_id in ['memory_len/0', 'memory_len/9', 'memory_len/17', 'memory_len/20', 'memory_len/22']:
     # the memory_length of above envs is 1, 10, 50, 80, 100, respectively.
     action_space_size = 2
@@ -19,7 +18,6 @@ elif env_id in ['memory_size/0']:
     observation_shape = 3
 else:
     raise NotImplementedError
-
 
 # ==============================================================
 # begin of the most frequently changed config specified by the user
@@ -53,12 +51,12 @@ bsuite_muzero_config = dict(
         model=dict(
             observation_shape=observation_shape,
             action_space_size=action_space_size,
-            model_type='mlp', 
+            model_type='mlp',
             lstm_hidden_size=128,
             latent_state_dim=128,
             self_supervised_learning_loss=True,  # NOTE: default is False.
             discrete_action_encoding_type='one_hot',
-            norm_type='BN', 
+            norm_type='BN',
         ),
         cuda=True,
         env_type='not_board_games',
@@ -102,4 +100,5 @@ create_config = bsuite_muzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=seed, max_env_step=max_env_step)

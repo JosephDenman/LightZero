@@ -111,4 +111,5 @@ if __name__ == '__main__':
         torch.backends.cudnn.allow_tf32 = True
 
     from lzero.entry import train_alphazero
+
     train_alphazero([main_config, create_config], seed=0, max_env_step=max_env_step)

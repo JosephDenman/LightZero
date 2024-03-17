@@ -98,4 +98,5 @@ create_config = minigrid_muzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=seed, max_env_step=max_env_step)

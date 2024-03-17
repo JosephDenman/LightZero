@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import Optional
 
 import cv2
-import gymnasium 
 import gym
+import gymnasium
 import numpy as np
 from ding.envs import NoopResetWrapper, MaxAndSkipWrapper, EpisodicLifeWrapper, FireResetWrapper, WarpFrameWrapper, \
     ScaledFloatFrameWrapper, \
@@ -262,6 +262,7 @@ class GameWrapper(gym.Wrapper):
 
     def legal_actions(self):
         return [_ for _ in range(self.env.action_space.n)]
+
 
 class GymnasiumToGymWrapper(gym.Wrapper):
     """

@@ -3,7 +3,7 @@ The Node, Roots class and related core functions for Stochastic MuZero.
 """
 import math
 import random
-from typing import List, Dict, Any, Tuple, Union
+from typing import List, Any, Tuple, Union
 
 import numpy as np
 import torch
@@ -20,7 +20,8 @@ class Node:
         ``get_children_distribution``, ``get_child``, ``expanded``, ``value``.
     """
 
-    def __init__(self, prior: float, legal_actions: List = None, action_space_size: int = 9, is_chance: bool = False, chance_space_size: int = 2) -> None:
+    def __init__(self, prior: float, legal_actions: List = None, action_space_size: int = 9, is_chance: bool = False,
+                 chance_space_size: int = 2) -> None:
         """
         Overview:
             Initializes a Node instance.
@@ -354,6 +355,7 @@ class SearchResults:
         self.last_actions = []
         self.search_lens = []
 
+
 def select_child(
         node: Node, min_max_stats: MinMaxStats, pb_c_base: float, pb_c_int: float, discount_factor: float,
         mean_q: float, players: int
@@ -452,7 +454,7 @@ def compute_ucb_score(
         value_score = 0
     if value_score > 1:
         value_score = 1
-    
+
     ucb_score = prior_score + value_score
 
     return ucb_score
@@ -467,7 +469,6 @@ def batch_traverse(
         results: SearchResults,
         virtual_to_play: List,
 ) -> Tuple[Any, Any]:
-
     """
     Overview:
         traverse, also called expansion. Process a batch roots at once.
@@ -594,7 +595,8 @@ def backpropagate(
 
             # TODO(pu): to_play related
             # true_reward is in the perspective of current player of node
-            bootstrap_value = (-true_reward if node.to_play == to_play else true_reward) + discount_factor * bootstrap_value
+            bootstrap_value = (
+                                  -true_reward if node.to_play == to_play else true_reward) + discount_factor * bootstrap_value
 
 
 def batch_backpropagate(
@@ -629,13 +631,16 @@ def batch_backpropagate(
         # ****** expand the leaf node ******
         if to_play is None:
             # set to_play=-1, because two_player mode to_play = {1,2}
-            results.nodes[i].expand(-1, latent_state_index_in_search_path, i, value_prefixs[leaf_order], policies[leaf_order], is_chance_list[i])
+            results.nodes[i].expand(-1, latent_state_index_in_search_path, i, value_prefixs[leaf_order],
+                                    policies[leaf_order], is_chance_list[i])
         else:
-            results.nodes[i].expand(to_play[i], latent_state_index_in_search_path, i, value_prefixs[leaf_order], policies[leaf_order], is_chance_list[i])
+            results.nodes[i].expand(to_play[i], latent_state_index_in_search_path, i, value_prefixs[leaf_order],
+                                    policies[leaf_order], is_chance_list[i])
 
         # ****** backpropagate ******
         if to_play is None:
-            backpropagate(results.search_paths[i], min_max_stats_lst.stats_lst[i], 0, values[leaf_order], discount_factor)
+            backpropagate(results.search_paths[i], min_max_stats_lst.stats_lst[i], 0, values[leaf_order],
+                          discount_factor)
         else:
             backpropagate(
                 results.search_paths[i], min_max_stats_lst.stats_lst[i], to_play[i], values[leaf_order], discount_factor

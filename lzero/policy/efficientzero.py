@@ -7,7 +7,6 @@ import torch.optim as optim
 from ding.model import model_wrap
 from ding.torch_utils import to_tensor
 from ding.utils import POLICY_REGISTRY
-from torch.distributions import Categorical
 from torch.nn import L1Loss
 
 from lzero.mcts import EfficientZeroMCTSCtree as MCTSCtree
@@ -369,7 +368,8 @@ class EfficientZeroPolicy(MuZeroPolicy):
             target_normalized_visit_count_masked = torch.index_select(
                 target_normalized_visit_count_init_step, 0, non_masked_indices
             )
-            target_policy_entropy = -((target_normalized_visit_count_masked+1e-6) * (target_normalized_visit_count_masked+1e-6).log()).sum(-1).mean()
+            target_policy_entropy = -((target_normalized_visit_count_masked + 1e-6) * (
+                        target_normalized_visit_count_masked + 1e-6).log()).sum(-1).mean()
         else:
             # Set target_policy_entropy to log(|A|) if all rows are masked
             target_policy_entropy = torch.log(torch.tensor(target_normalized_visit_count_init_step.shape[-1]))
@@ -436,7 +436,8 @@ class EfficientZeroPolicy(MuZeroPolicy):
                 target_normalized_visit_count_masked = torch.index_select(
                     target_normalized_visit_count, 0, non_masked_indices
                 )
-                target_policy_entropy += -((target_normalized_visit_count_masked+1e-6) * (target_normalized_visit_count_masked+1e-6).log()).sum(-1).mean()
+                target_policy_entropy += -((target_normalized_visit_count_masked + 1e-6) * (
+                            target_normalized_visit_count_masked + 1e-6).log()).sum(-1).mean()
             else:
                 # Set target_policy_entropy to log(|A|) if all rows are masked
                 target_policy_entropy += torch.log(torch.tensor(target_normalized_visit_count.shape[-1]))
@@ -465,8 +466,8 @@ class EfficientZeroPolicy(MuZeroPolicy):
         # ==============================================================
         # weighted loss with masks (some invalid states which are out of trajectory.)
         loss = (
-            self._cfg.ssl_loss_weight * consistency_loss + self._cfg.policy_loss_weight * policy_loss +
-            self._cfg.value_loss_weight * value_loss + self._cfg.reward_loss_weight * value_prefix_loss
+                self._cfg.ssl_loss_weight * consistency_loss + self._cfg.policy_loss_weight * policy_loss +
+                self._cfg.value_loss_weight * value_loss + self._cfg.reward_loss_weight * value_prefix_loss
         )
         weighted_total_loss = (weights * loss).mean()
         # TODO(pu): test the effect of gradient scale.
@@ -532,13 +533,13 @@ class EfficientZeroPolicy(MuZeroPolicy):
         self.collect_epsilon = 0.0
 
     def _forward_collect(
-        self,
-        data: torch.Tensor,
-        action_mask: list = None,
-        temperature: float = 1,
-        to_play: List = [-1],
-        epsilon: float = 0.25,
-        ready_env_id: np.array = None
+            self,
+            data: torch.Tensor,
+            action_mask: list = None,
+            temperature: float = 1,
+            to_play: List = [-1],
+            epsilon: float = 0.25,
+            ready_env_id: np.array = None
     ):
         """
         Overview:
@@ -648,7 +649,7 @@ class EfficientZeroPolicy(MuZeroPolicy):
         else:
             self._mcts_eval = MCTSPtree(self._cfg)
 
-    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: -1, ready_env_id: np.array = None,):
+    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: -1, ready_env_id: np.array = None, ):
         """
          Overview:
              The forward function for evaluating the current policy in eval mode. Use model to execute MCTS search.

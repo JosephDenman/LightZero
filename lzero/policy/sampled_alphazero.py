@@ -13,7 +13,7 @@ from ding.utils.data import default_collate
 from easydict import EasyDict
 
 from lzero.policy import configure_optimizers
-from lzero.policy.utils import pad_and_get_lengths, compute_entropy
+from lzero.policy.utils import pad_and_get_lengths
 
 
 @POLICY_REGISTRY.register('sampled_alphazero')

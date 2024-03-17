@@ -1,6 +1,6 @@
 import numpy as np
-from easydict import EasyDict
 import pytest
+from easydict import EasyDict
 
 from zoo.board_games.tictactoe.envs.tictactoe_env import TicTacToeEnv
 

@@ -4,14 +4,14 @@ from typing import Optional, Tuple
 
 import numpy as np
 import torch
-from tensorboardX import SummaryWriter
-
 from ding.config import compile_config
 from ding.envs import create_env_manager
 from ding.envs import get_vec_env_setting
 from ding.policy import create_policy
 from ding.utils import set_pkg_seed
 from ding.worker import BaseLearner
+from tensorboardX import SummaryWriter
+
 from lzero.worker import MuZeroEvaluator
 
 
@@ -38,7 +38,8 @@ def eval_muzero(
         - policy (:obj:`Policy`): Converged policy.
     """
     cfg, create_cfg = input_cfg
-    assert create_cfg.policy.type in ['efficientzero', 'muzero', 'stochastic_muzero', 'gumbel_muzero', 'sampled_efficientzero'], \
+    assert create_cfg.policy.type in ['efficientzero', 'muzero', 'stochastic_muzero', 'gumbel_muzero',
+                                      'sampled_efficientzero'], \
         "LightZero now only support the following algo.: 'efficientzero', 'muzero', 'stochastic_muzero', 'gumbel_muzero', 'sampled_efficientzero'"
 
     if cfg.policy.cuda and torch.cuda.is_available():

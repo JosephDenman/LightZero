@@ -118,7 +118,7 @@ class MuZeroGameBuffer(GameBuffer):
             pos_in_game_segment = pos_in_game_segment_list[i]
 
             actions_tmp = game.action_segment[pos_in_game_segment:pos_in_game_segment +
-                                              self._cfg.num_unroll_steps].tolist()
+                                                                  self._cfg.num_unroll_steps].tolist()
             # add mask for invalid actions (out of trajectory), 1 for valid, 0 for invalid
             mask_tmp = [1. for i in range(len(actions_tmp))]
             mask_tmp += [0. for _ in range(self._cfg.num_unroll_steps + 1 - len(mask_tmp))]
@@ -332,7 +332,8 @@ class MuZeroGameBuffer(GameBuffer):
                     policy_obs_list.append(obs)
 
         policy_re_context = [
-            policy_obs_list, policy_mask, pos_in_game_segment_list, batch_index_list, child_visits, root_values, game_segment_lens,
+            policy_obs_list, policy_mask, pos_in_game_segment_list, batch_index_list, child_visits, root_values,
+            game_segment_lens,
             action_mask_segment, to_play_segment
         ]
         return policy_re_context
@@ -349,7 +350,7 @@ class MuZeroGameBuffer(GameBuffer):
             - batch_target_values (:obj:'np.ndarray): batch of value estimation
         """
         value_obs_list, value_mask, pos_in_game_segment_list, rewards_list, game_segment_lens, td_steps_list, action_mask_segment, \
-        to_play_segment = reward_value_context  # noqa
+            to_play_segment = reward_value_context  # noqa
         # transition_batch_size = game_segment_batch_size * (num_unroll_steps+1)
         transition_batch_size = len(value_obs_list)
         game_segment_batch_size = len(pos_in_game_segment_list)
@@ -440,13 +441,14 @@ class MuZeroGameBuffer(GameBuffer):
                 value_list = value_list.reshape(-1) * np.array(
                     [
                         self._cfg.discount_factor ** td_steps_list[i] if int(td_steps_list[i]) %
-                        2 == 0 else -self._cfg.discount_factor ** td_steps_list[i]
+                                                                         2 == 0 else -self._cfg.discount_factor **
+                                                                                      td_steps_list[i]
                         for i in range(transition_batch_size)
                     ]
                 )
             else:
                 value_list = value_list.reshape(-1) * (
-                    np.array([self._cfg.discount_factor for _ in range(transition_batch_size)]) ** td_steps_list
+                        np.array([self._cfg.discount_factor for _ in range(transition_batch_size)]) ** td_steps_list
                 )
 
             value_list = value_list * np.array(value_mask)
@@ -503,7 +505,7 @@ class MuZeroGameBuffer(GameBuffer):
 
         # for board games
         policy_obs_list, policy_mask, pos_in_game_segment_list, batch_index_list, child_visits, root_values, game_segment_lens, action_mask_segment, \
-        to_play_segment = policy_re_context
+            to_play_segment = policy_re_context
         # transition_batch_size = game_segment_batch_size * (self._cfg.num_unroll_steps + 1)
         transition_batch_size = len(policy_obs_list)
         game_segment_batch_size = len(pos_in_game_segment_list)
@@ -599,7 +601,7 @@ class MuZeroGameBuffer(GameBuffer):
                             # the target policies and root values are stored in the gamesegment, specifically, ``child_visit_segment`` and ``root_value_segment``
                             # we replace the data at the corresponding location with the latest search results to keep the most up-to-date targets
                             sim_num = sum(distributions)
-                            child_visit[current_index] = [visit_count/sim_num for visit_count in distributions]
+                            child_visit[current_index] = [visit_count / sim_num for visit_count in distributions]
                             root_value[current_index] = searched_value
                             if self._cfg.action_type == 'fixed_action_space':
                                 # for atari/classic_control/box2d environments that only have one player.

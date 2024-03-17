@@ -13,10 +13,11 @@ Overview:
     | legal_actions_cython_lru  | 8.123
 """
 
+from functools import lru_cache
+
 import numpy as np
 from ding.utils import EasyTimer
 from zoo.board_games.gomoku.envs.legal_actions_cython import legal_actions_cython
-from functools import lru_cache
 
 
 def _legal_actions_cython_func(board_size, board_tuple):

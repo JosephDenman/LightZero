@@ -127,9 +127,11 @@ if __name__ == '__main__':
 
     run_num = 10
 
+
     def profile_mcts(run_num):
         for i in range(run_num):
             check_mcts()
+
 
     # Save the analysis results to a file.
     cProfile.run(f"profile_mcts({run_num})", filename="result.out")

@@ -576,7 +576,7 @@ class GumbelMuZeroPolicy(MuZeroPolicy):
 
             for i, env_id in enumerate(ready_env_id):
                 distributions, value, improved_policy_probs = roots_visit_count_distributions[i], roots_values[i], \
-                roots_improved_policy_probs[i]
+                    roots_improved_policy_probs[i]
 
                 roots_completed_value = roots_completed_values[i]
                 # NOTE: Only legal actions possess visit counts, so the ``action_index_in_legal_action_set`` represents
@@ -680,7 +680,7 @@ class GumbelMuZeroPolicy(MuZeroPolicy):
 
             for i, env_id in enumerate(ready_env_id):
                 distributions, value, improved_policy_probs = roots_visit_count_distributions[i], roots_values[i], \
-                roots_improved_policy_probs[i]
+                    roots_improved_policy_probs[i]
                 # NOTE: Only legal actions possess visit counts, so the ``action_index_in_legal_action_set`` represents
                 # the index within the legal action set, rather than the index in the entire action set.
                 #  Setting deterministic=True implies choosing the action with the highest value (argmax) rather than

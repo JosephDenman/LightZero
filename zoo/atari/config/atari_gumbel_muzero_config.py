@@ -49,7 +49,7 @@ atari_gumbel_muzero_config = dict(
             downsample=True,
             self_supervised_learning_loss=True,  # default is False
             discrete_action_encoding_type='one_hot',
-            norm_type='BN', 
+            norm_type='BN',
         ),
         cuda=True,
         env_type='not_board_games',
@@ -90,4 +90,5 @@ create_config = atari_gumbel_muzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=0, max_env_step=max_env_step)

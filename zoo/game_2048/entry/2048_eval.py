@@ -2,7 +2,6 @@
 import numpy as np
 
 from lzero.entry import eval_muzero
-from zoo.game_2048.config.muzero_2048_config import main_config, create_config
 from zoo.game_2048.config.stochastic_muzero_2048_config import main_config, create_config
 
 if __name__ == "__main__":
@@ -39,7 +38,7 @@ if __name__ == "__main__":
     main_config.env.max_episode_steps = int(1e9)  # Adjust according to different environments
     total_test_episodes = num_episodes_each_seed * len(seeds)
     create_config.env_manager.type = 'base'  # Visualization requires the 'type' to be set as base
-    main_config.env.evaluator_env_num = 1   # Visualization requires the 'env_num' to be set as 1
+    main_config.env.evaluator_env_num = 1  # Visualization requires the 'env_num' to be set as 1
     main_config.env.n_evaluator_episode = total_test_episodes
     for seed in seeds:
         returns_mean, returns = eval_muzero(

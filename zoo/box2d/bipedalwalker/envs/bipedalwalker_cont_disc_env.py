@@ -86,7 +86,7 @@ class BipedalWalkerDiscEnv(BipedalWalkerEnv):
             self._observation_space = self._env.observation_space
             self._action_space = self._env.action_space
             self._reward_space = gym.spaces.Box(
-                low=self._env.reward_range[0], high=self._env.reward_range[1], shape=(1, ), dtype=np.float32
+                low=self._env.reward_range[0], high=self._env.reward_range[1], shape=(1,), dtype=np.float32
             )
             self._init_flag = True
         if self._replay_path is not None:
@@ -136,7 +136,7 @@ class BipedalWalkerDiscEnv(BipedalWalkerEnv):
         # disc_to_cont: transform discrete action index to original continuous action
         action = [-1 + 2 / self.n * k for k in self.disc_to_cont[int(action)]]
         action = to_ndarray(action)
-        if action.shape == (1, ):
+        if action.shape == (1,):
             action = action.squeeze()
         if self._act_scale:
             action = affine_transform(action, min_val=self._raw_action_space.low, max_val=self._raw_action_space.high)
@@ -176,4 +176,3 @@ class BipedalWalkerDiscEnv(BipedalWalkerEnv):
             - repr_str (:obj:`str`): Representation string of the environment instance.
         """
         return "LightZero BipedalWalker Env (with manually discretized action space)"
-

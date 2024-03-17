@@ -41,7 +41,7 @@ cfg = dict(
                 support_scale=10,
                 reward_support_size=21,
                 value_support_size=21,
-                norm_type='BN', 
+                norm_type='BN',
             ),
             cuda=True,
             env_type='board_games',
@@ -70,7 +70,7 @@ cfg = dict(
             gradient_logger=False, video_logger=False, plot_logger=False, action_logger=False, return_logger=False
         ),
     ),
-    create_config = dict(
+    create_config=dict(
         env=dict(
             type='tictactoe',
             import_names=['zoo.board_games.tictactoe.envs.tictactoe_env'],

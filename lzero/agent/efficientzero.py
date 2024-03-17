@@ -124,8 +124,8 @@ class EfficientZeroAgent:
         self.env_fn, self.collector_env_cfg, self.evaluator_env_cfg = get_vec_env_setting(self.cfg.env)
 
     def train(
-        self,
-        step: int = int(1e7),
+            self,
+            step: int = int(1e7),
     ) -> TrainingReturn:
         """
         Overview:
@@ -306,7 +306,6 @@ class EfficientZeroAgent:
             deply_configs[0]['save_replay'] = True
 
         for seed in seed_list:
-
             evaluator_env = create_env_manager(self.cfg.env.manager, [partial(self.env_fn, cfg=deply_configs[0])])
 
             evaluator_env.seed(seed if seed is not None else self.cfg.seed, dynamic_seed=False)
@@ -356,8 +355,8 @@ class EfficientZeroAgent:
         return EvalReturn(eval_value=np.mean(reward_list), eval_value_std=np.std(reward_list))
 
     def batch_evaluate(
-        self,
-        n_evaluator_episode: int = None,
+            self,
+            n_evaluator_episode: int = None,
     ) -> EvalReturn:
         """
         Overview:

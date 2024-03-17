@@ -1,12 +1,13 @@
+import random
+import time
+
+import numpy as np
 import torch
 from easydict import EasyDict
-from lzero.policy import inverse_scalar_transform, select_action
-import numpy as np
-import random
 
-from lzero.mcts.tree_search.mcts_ptree import EfficientZeroMCTSPtree as MCTSPtree
 from lzero.mcts.tree_search.mcts_ctree import EfficientZeroMCTSCtree as MCTSCtree
-import time
+from lzero.mcts.tree_search.mcts_ptree import EfficientZeroMCTSPtree as MCTSPtree
+from lzero.policy import inverse_scalar_transform, select_action
 
 
 class MuZeroModelFake(torch.nn.Module):

@@ -40,7 +40,7 @@ minigrid_efficientzero_config = dict(
         model=dict(
             observation_shape=2835,
             action_space_size=7,
-            model_type='mlp', 
+            model_type='mlp',
             lstm_hidden_size=256,
             latent_state_dim=256,
             discrete_action_encoding_type='one_hot',
@@ -95,4 +95,5 @@ create_config = minigrid_efficientzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=seed, max_env_step=max_env_step)

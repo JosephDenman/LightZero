@@ -39,25 +39,29 @@ def test_get_done_winner_cython():
 
     # case 5
     board_size = 6
-    board = [[1, 1, 1, 1, 0, 1], [2, 2, 1, 1, 0, 2], [2, 2, 1, 2, 0, 1], [2, 1, 2, 2, 0, 2], [2, 1, 1, 2, 0, 1],  [1, 2, 1, 2, 0, 2]]
+    board = [[1, 1, 1, 1, 0, 1], [2, 2, 1, 1, 0, 2], [2, 2, 1, 2, 0, 1], [2, 1, 2, 2, 0, 2], [2, 1, 1, 2, 0, 1],
+             [1, 2, 1, 2, 0, 2]]
     done_winner = _get_done_winner_func(board_size, tuple(map(tuple, board)))
     assert done_winner == (False, -1), f"Error: {done_winner}"
 
     # case 6
     board_size = 6
-    board = [[1, 1, 1, 1, 2, 1], [2, 2, 1, 1, 1, 2], [2, 2, 1, 2, 2, 1], [2, 1, 2, 2, 1, 2], [2, 1, 1, 2, 1, 1],  [1, 2, 1, 2, 1, 2]]
+    board = [[1, 1, 1, 1, 2, 1], [2, 2, 1, 1, 1, 2], [2, 2, 1, 2, 2, 1], [2, 1, 2, 2, 1, 2], [2, 1, 1, 2, 1, 1],
+             [1, 2, 1, 2, 1, 2]]
     done_winner = _get_done_winner_func(board_size, tuple(map(tuple, board)))
     assert done_winner == (True, -1), f"Error: {done_winner}"
 
     # case 7
     board_size = 6
-    board = [[1, 1, 1, 1, 0, 1], [2, 2, 1, 1, 0, 2], [2, 2, 1, 2, 0, 1], [2, 1, 2, 2, 0, 2], [2, 1, 1, 2, 0, 1],  [2, 2, 1, 2, 0, 1]]
+    board = [[1, 1, 1, 1, 0, 1], [2, 2, 1, 1, 0, 2], [2, 2, 1, 2, 0, 1], [2, 1, 2, 2, 0, 2], [2, 1, 1, 2, 0, 1],
+             [2, 2, 1, 2, 0, 1]]
     done_winner = _get_done_winner_func(board_size, tuple(map(tuple, board)))
     assert done_winner == (True, 2), f"Error: {done_winner}"
 
     # case 8
     board_size = 6
-    board = [[1, 1, 1, 1, 1, 0], [2, 2, 1, 1, 0, 2], [2, 2, 1, 2, 0, 1], [2, 1, 2, 2, 0, 2], [2, 1, 1, 2, 0, 1],  [1, 2, 1, 2, 0, 2]]
+    board = [[1, 1, 1, 1, 1, 0], [2, 2, 1, 1, 0, 2], [2, 2, 1, 2, 0, 1], [2, 1, 2, 2, 0, 2], [2, 1, 1, 2, 0, 1],
+             [1, 2, 1, 2, 0, 2]]
     done_winner = _get_done_winner_func(board_size, tuple(map(tuple, board)))
     assert done_winner == (True, 1), f"Error: {done_winner}"
 

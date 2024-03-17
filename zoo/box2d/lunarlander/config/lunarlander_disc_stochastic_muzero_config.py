@@ -37,7 +37,7 @@ lunarlander_muzero_config = dict(
             self_supervised_learning_loss=True,  # NOTE: default is False.
             discrete_action_encoding_type='one_hot',
             res_connection_in_dynamics=True,
-            norm_type='BN', 
+            norm_type='BN',
         ),
         cuda=True,
         gumbel_algo=False,
@@ -87,6 +87,7 @@ if __name__ == "__main__":
 
     if entry_type == "train_muzero":
         from lzero.entry import train_muzero
+
         train_muzero([main_config, create_config], seed=0, max_env_step=max_env_step)
     elif entry_type == "train_muzero_with_gym_env":
         """
@@ -94,4 +95,5 @@ if __name__ == "__main__":
         Users can refer to lzero/envs/wrappers for more details.
         """
         from lzero.entry import train_muzero_with_gym_env
+
         train_muzero_with_gym_env([main_config, create_config], seed=0, max_env_step=max_env_step)

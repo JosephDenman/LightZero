@@ -124,7 +124,7 @@ class TestUtils():
         output = negative_cosine_similarity(x1, x2)
 
         # We check if the output shape is as expected.
-        assert output.shape == (batch_size, )
+        assert output.shape == (batch_size,)
 
         # We check if all elements of the output are between -1 and 1.
         assert ((output >= -1) & (output <= 1)).all()
@@ -134,14 +134,14 @@ class TestUtils():
         x1 = torch.randn(batch_size, dim)
         positive_factor = torch.randint(1, 100, [1])
         output_positive = negative_cosine_similarity(x1, positive_factor.float() * x1)
-        assert output_positive.shape == (batch_size, )
+        assert output_positive.shape == (batch_size,)
         assert ((output_positive - (-1)) < 1e-6).all()
 
         # We test another special case where the two input vectors are in opposite directions.
         # In this case, the cosine similarity should be 1.
         negative_factor = -torch.randint(1, 100, [1])
         output_negative = negative_cosine_similarity(x1, negative_factor.float() * x1)
-        assert output_negative.shape == (batch_size, )
+        assert output_negative.shape == (batch_size,)
         assert ((output_positive - 1) < 1e-6).all()
 
     def test_to_torch_float_tensor(self):

@@ -1,6 +1,7 @@
 import pytest
-from zoo.atari.envs.atari_lightzero_env import AtariLightZeroEnv
 from easydict import EasyDict
+
+from zoo.atari.envs.atari_lightzero_env import AtariLightZeroEnv
 
 config = EasyDict(dict(
     collector_env_num=8,
@@ -27,6 +28,7 @@ config = EasyDict(dict(
 ))
 
 config.max_episode_steps = config.eval_max_episode_steps
+
 
 @pytest.mark.envtest
 class TestAtariLightZeroEnv:

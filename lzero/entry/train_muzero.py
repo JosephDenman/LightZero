@@ -8,8 +8,8 @@ from ding.config import compile_config
 from ding.envs import create_env_manager
 from ding.envs import get_vec_env_setting
 from ding.policy import create_policy
-from ding.utils import set_pkg_seed, get_rank
 from ding.rl_utils import get_epsilon_greedy_fn
+from ding.utils import set_pkg_seed, get_rank
 from ding.worker import BaseLearner
 from tensorboardX import SummaryWriter
 
@@ -47,7 +47,8 @@ def train_muzero(
     """
 
     cfg, create_cfg = input_cfg
-    assert create_cfg.policy.type in ['efficientzero', 'muzero', 'sampled_efficientzero', 'gumbel_muzero', 'stochastic_muzero'], \
+    assert create_cfg.policy.type in ['efficientzero', 'muzero', 'sampled_efficientzero', 'gumbel_muzero',
+                                      'stochastic_muzero'], \
         "train_muzero entry now only support the following algo.: 'efficientzero', 'muzero', 'sampled_efficientzero', 'gumbel_muzero', 'stochastic_muzero'"
 
     if create_cfg.policy.type == 'muzero':

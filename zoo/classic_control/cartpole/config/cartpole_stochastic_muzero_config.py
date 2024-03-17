@@ -36,7 +36,7 @@ cartpole_stochastic_muzero_config = dict(
             latent_state_dim=128,
             self_supervised_learning_loss=True,  # NOTE: default is False.
             discrete_action_encoding_type='one_hot',
-            norm_type='BN', 
+            norm_type='BN',
         ),
         mcts_ctree=True,
         cuda=True,
@@ -77,4 +77,5 @@ create_config = cartpole_stochastic_muzero_create_config
 
 if __name__ == "__main__":
     from lzero.entry import train_muzero
+
     train_muzero([main_config, create_config], seed=0, max_env_step=max_env_step)

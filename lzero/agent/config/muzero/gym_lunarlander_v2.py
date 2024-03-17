@@ -32,13 +32,13 @@ cfg = dict(
             model=dict(
                 observation_shape=8,
                 action_space_size=4,
-                model_type='mlp', 
+                model_type='mlp',
                 lstm_hidden_size=256,
                 latent_state_dim=256,
                 self_supervised_learning_loss=True,  # NOTE: default is False.
                 discrete_action_encoding_type='one_hot',
                 res_connection_in_dynamics=True,
-                norm_type='BN', 
+                norm_type='BN',
             ),
             cuda=True,
             env_type='not_board_games',

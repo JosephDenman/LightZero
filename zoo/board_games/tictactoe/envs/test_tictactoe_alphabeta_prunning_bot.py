@@ -1,8 +1,8 @@
-from easydict import EasyDict
-from zoo.board_games.tictactoe.envs.tictactoe_env import TicTacToeEnv
-from zoo.board_games.alphabeta_pruning_bot import AlphaBetaPruningBot
-
 import pytest
+from easydict import EasyDict
+
+from zoo.board_games.alphabeta_pruning_bot import AlphaBetaPruningBot
+from zoo.board_games.tictactoe.envs.tictactoe_env import TicTacToeEnv
 
 cfg = dict(
     prob_random_agent=0,

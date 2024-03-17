@@ -290,7 +290,7 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
         else:
             obs_batch_orig, action_batch, mask_batch, indices, weights, make_time = current_batch
         target_reward, target_value, target_policy = target_batch
-        
+
         if self._cfg.use_ture_chance_label_in_chance_encoder:
             chance_batch = torch.Tensor(chance_batch).to(self._cfg.device)
             chance_one_hot_batch = torch.nn.functional.one_hot(chance_batch.long(), self._cfg.model.chance_space_size)
@@ -381,7 +381,8 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
             network_output = self._learn_model.recurrent_inference(
                 latent_state, action_batch[:, step_k], afterstate=False
             )
-            afterstate, afterstate_reward, afterstate_value, afterstate_policy_logits = mz_network_output_unpack(network_output)
+            afterstate, afterstate_reward, afterstate_value, afterstate_policy_logits = mz_network_output_unpack(
+                network_output)
 
             # ==============================================================
             # encode the consecutive frames to predict chance
@@ -396,7 +397,7 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
                 chance_code = true_chance_code
             else:
                 chance_code = torch.argmax(chance_encoding, dim=1).long().unsqueeze(-1)
-            
+
             # unroll with the dynamics function: predict the next ``latent_state``, ``reward``,
             # given current ``afterstate`` and ``chance_code``.
             # And then predict policy_logits and value with the prediction function.
@@ -442,7 +443,7 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
                     visualize_avg_softmax(afterstate_policy_logits)
                     # plot the argmax distribution of true_chance_one_hot
                     plot_argmax_distribution(true_chance_one_hot)
-                    topK_values = range(1, self._cfg.model.chance_space_size+1)  # top_K values from 1 to 32
+                    topK_values = range(1, self._cfg.model.chance_space_size + 1)  # top_K values from 1 to 32
                     # calculate the topK accuracy of afterstate_policy_logits and plot the topK accuracy curve.
                     plot_topk_accuracy(afterstate_policy_logits, true_chance_one_hot, topK_values)
 
@@ -456,7 +457,7 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
                     visualize_avg_softmax(afterstate_policy_logits)
                     # plot the argmax distribution of true_chance_one_hot
                     plot_argmax_distribution(true_chance_one_hot)
-                    topK_values = range(1, self._cfg.model.chance_space_size+1)  # top_K values from 1 to 32
+                    topK_values = range(1, self._cfg.model.chance_space_size + 1)  # top_K values from 1 to 32
                     # calculate the topK accuracy of afterstate_policy_logits and plot the topK accuracy curve.
                     plot_topk_accuracy(afterstate_policy_logits, true_chance_one_hot, topK_values)
 
@@ -481,10 +482,10 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
         # ==============================================================
         # weighted loss with masks (some invalid states which are out of trajectory.)
         loss = (
-            self._cfg.ssl_loss_weight * consistency_loss + self._cfg.policy_loss_weight * policy_loss +
-            self._cfg.value_loss_weight * value_loss + self._cfg.reward_loss_weight * reward_loss +
-            self._cfg.afterstate_policy_loss_weight * afterstate_policy_loss +
-            self._cfg.afterstate_value_loss_weight * afterstate_value_loss + self._cfg.commitment_loss_weight * commitment_loss
+                self._cfg.ssl_loss_weight * consistency_loss + self._cfg.policy_loss_weight * policy_loss +
+                self._cfg.value_loss_weight * value_loss + self._cfg.reward_loss_weight * reward_loss +
+                self._cfg.afterstate_policy_loss_weight * afterstate_policy_loss +
+                self._cfg.afterstate_value_loss_weight * afterstate_value_loss + self._cfg.commitment_loss_weight * commitment_loss
         )
         weighted_total_loss = (weights * loss).mean()
 
@@ -676,7 +677,8 @@ class StochasticMuZeroPolicy(MuZeroPolicy):
         else:
             self._mcts_eval = MCTSPtree(self._cfg)
 
-    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: int = -1, ready_env_id: np.array = None,) -> Dict:
+    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: int = -1,
+                      ready_env_id: np.array = None, ) -> Dict:
         """
         Overview:
             The forward function for evaluating the current policy in eval mode. Use model to execute MCTS search. \

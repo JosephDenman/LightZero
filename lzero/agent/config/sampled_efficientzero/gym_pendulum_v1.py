@@ -37,7 +37,7 @@ cfg = dict(
                 continuous_action_space=continuous_action_space,
                 num_of_sampled_actions=K,
                 sigma_type='conditioned',
-                model_type='mlp', 
+                model_type='mlp',
                 lstm_hidden_size=128,
                 latent_state_dim=128,
             ),

@@ -19,7 +19,7 @@ elif env_id == 'BreakoutNoFrameskip-v4':
 # ==============================================================
 gpu_num = 2
 collector_env_num = 8
-n_episode = int(8*gpu_num)
+n_episode = int(8 * gpu_num)
 evaluator_env_num = 3
 num_simulations = 50
 update_per_collect = 1000

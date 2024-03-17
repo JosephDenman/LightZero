@@ -1,8 +1,8 @@
-from easydict import EasyDict
-from zoo.board_games.tictactoe.envs.tictactoe_env import TicTacToeEnv
-from zoo.board_games.mcts_bot import MCTSBot
-
 import pytest
+from easydict import EasyDict
+
+from zoo.board_games.mcts_bot import MCTSBot
+from zoo.board_games.tictactoe.envs.tictactoe_env import TicTacToeEnv
 
 cfg = dict(
     prob_random_agent=0,

@@ -16,11 +16,11 @@ class LightZeroRandomPolicy(Policy):
     """
 
     def __init__(
-        self,
-        cfg: dict,
-        model: Optional[Union[type, torch.nn.Module]] = None,
-        enable_field: Optional[List[str]] = None,
-        action_space: Any = None,
+            self,
+            cfg: dict,
+            model: Optional[Union[type, torch.nn.Module]] = None,
+            enable_field: Optional[List[str]] = None,
+            action_space: Any = None,
     ):
         if cfg.type == 'muzero':
             from lzero.mcts import MuZeroMCTSCtree as MCTSCtree
@@ -86,13 +86,13 @@ class LightZeroRandomPolicy(Policy):
         )
 
     def _forward_collect(
-        self,
-        data: torch.Tensor,
-        action_mask: list = None,
-        temperature: float = 1,
-        to_play: List = [-1],
-        epsilon: float = 0.25,
-        ready_env_id: np.array = None,
+            self,
+            data: torch.Tensor,
+            action_mask: list = None,
+            temperature: float = 1,
+            to_play: List = [-1],
+            epsilon: float = 0.25,
+            ready_env_id: np.array = None,
     ) -> Dict:
         """
         Overview:
@@ -269,7 +269,7 @@ class LightZeroRandomPolicy(Policy):
     def _forward_learn(self, data: torch.Tensor) -> Dict[str, Union[float, int]]:
         pass
 
-    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: -1, ready_env_id: np.array = None,):
+    def _forward_eval(self, data: torch.Tensor, action_mask: list, to_play: -1, ready_env_id: np.array = None, ):
         pass
 
     def _monitor_vars_learn(self) -> List[str]:

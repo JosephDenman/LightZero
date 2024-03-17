@@ -1,9 +1,8 @@
 import gym
 import numpy as np
-from easydict import EasyDict
-
 from ding.envs import BaseEnvTimestep
 from ding.utils import ENV_WRAPPER_REGISTRY
+from easydict import EasyDict
 
 
 @ENV_WRAPPER_REGISTRY.register('lightzero_env_wrapper')
@@ -57,8 +56,8 @@ class LightZeroEnvWrapper(gym.Wrapper):
                 {
                     'observation': self._raw_observation_space,
                     'action_mask': gym.spaces.Box(low=np.inf, high=np.inf,
-                                                  shape=(1, )),  # TODO: gym.spaces.Constant(None)
-                    'to_play': gym.spaces.Box(low=-1, high=-1, shape=(1, )),  # TODO: gym.spaces.Constant(-1)
+                                                  shape=(1,)),  # TODO: gym.spaces.Constant(None)
+                    'to_play': gym.spaces.Box(low=-1, high=-1, shape=(1,)),  # TODO: gym.spaces.Constant(-1)
                 }
             )
         else:
@@ -68,7 +67,7 @@ class LightZeroEnvWrapper(gym.Wrapper):
                     'action_mask': gym.spaces.MultiDiscrete([2 for _ in range(self.env.action_space.n)])
                     if isinstance(self.env.action_space, gym.spaces.Discrete) else
                     gym.spaces.MultiDiscrete([2 for _ in range(self.env.action_space.shape[0])]),  # {0,1}
-                    'to_play': gym.spaces.Box(low=-1, high=-1, shape=(1, )),  # TODO: gym.spaces.Constant(-1)
+                    'to_play': gym.spaces.Box(low=-1, high=-1, shape=(1,)),  # TODO: gym.spaces.Constant(-1)
                 }
             )
 

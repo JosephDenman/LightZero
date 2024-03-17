@@ -1,8 +1,8 @@
+import pytest
 from easydict import EasyDict
+
 from zoo.board_games.gomoku.envs.gomoku_env import GomokuEnv
 from zoo.board_games.mcts_bot import MCTSBot
-
-import pytest
 
 cfg = dict(
     board_size=5,

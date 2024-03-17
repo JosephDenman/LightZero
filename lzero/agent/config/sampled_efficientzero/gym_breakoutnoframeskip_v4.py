@@ -38,7 +38,7 @@ cfg = dict(
                 continuous_action_space=continuous_action_space,
                 num_of_sampled_actions=K,
                 discrete_action_encoding_type='one_hot',
-                norm_type='BN', 
+                norm_type='BN',
             ),
             cuda=True,
             env_type='not_board_games',
@@ -62,7 +62,7 @@ cfg = dict(
             gradient_logger=False, video_logger=False, plot_logger=False, action_logger=False, return_logger=False
         ),
     ),
-    create_config = dict(
+    create_config=dict(
         env=dict(
             type='atari_lightzero',
             import_names=['zoo.atari.envs.atari_lightzero_env'],

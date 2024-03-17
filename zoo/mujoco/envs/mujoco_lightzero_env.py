@@ -139,4 +139,3 @@ class MujocoEnvLZ(MujocoEnv):
         String representation of the environment.
         """
         return "LightZero Mujoco Env({})".format(self._cfg.env_id)
-

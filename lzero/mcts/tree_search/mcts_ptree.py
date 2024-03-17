@@ -331,7 +331,8 @@ class EfficientZeroMCTSPtree(object):
                     )
                 else:
                     latent_state_index_in_search_path, latent_state_index_in_batch, last_actions, virtual_to_play_batch = tree_efficientzero.batch_traverse(
-                        roots, pb_c_base, pb_c_init, discount_factor, min_max_stats_lst, results, copy.deepcopy(to_play_batch)
+                        roots, pb_c_base, pb_c_init, discount_factor, min_max_stats_lst, results,
+                        copy.deepcopy(to_play_batch)
                     )
                 # obtain the search horizon for leaf nodes
                 search_lens = results.search_lens
@@ -403,5 +404,3 @@ class EfficientZeroMCTSPtree(object):
                     current_latent_state_index, discount_factor, value_prefix_batch, value_batch, policy_logits_batch,
                     min_max_stats_lst, results, is_reset_list, virtual_to_play_batch
                 )
-
-

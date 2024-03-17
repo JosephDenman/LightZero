@@ -1,6 +1,7 @@
 import pytest
 import torch
 from easydict import EasyDict
+
 from lzero.policy import inverse_scalar_transform
 
 

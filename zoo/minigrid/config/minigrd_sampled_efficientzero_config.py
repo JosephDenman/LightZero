@@ -45,11 +45,11 @@ minigrid_sampled_efficientzero_config = dict(
             action_space_size=7,
             continuous_action_space=continuous_action_space,
             num_of_sampled_actions=K,
-            model_type='mlp', 
+            model_type='mlp',
             lstm_hidden_size=256,
             latent_state_dim=256,
             discrete_action_encoding_type='one_hot',
-            norm_type='BN', 
+            norm_type='BN',
         ),
         policy_entropy_loss_weight=policy_entropy_loss_weight,
         eps=dict(

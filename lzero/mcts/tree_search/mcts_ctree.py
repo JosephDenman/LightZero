@@ -6,8 +6,8 @@ import torch
 from easydict import EasyDict
 
 from lzero.mcts.ctree.ctree_efficientzero import ez_tree as tree_efficientzero
-from lzero.mcts.ctree.ctree_muzero import mz_tree as tree_muzero
 from lzero.mcts.ctree.ctree_gumbel_muzero import gmz_tree as tree_gumbel_muzero
+from lzero.mcts.ctree.ctree_muzero import mz_tree as tree_muzero
 from lzero.policy import InverseScalarTransform, to_detach_cpu_numpy
 
 if TYPE_CHECKING:
@@ -354,7 +354,8 @@ class EfficientZeroMCTSCtree(object):
                 network_output.latent_state = to_detach_cpu_numpy(network_output.latent_state)
                 network_output.policy_logits = to_detach_cpu_numpy(network_output.policy_logits)
                 network_output.value = to_detach_cpu_numpy(self.inverse_scalar_transform_handle(network_output.value))
-                network_output.value_prefix = to_detach_cpu_numpy(self.inverse_scalar_transform_handle(network_output.value_prefix))
+                network_output.value_prefix = to_detach_cpu_numpy(
+                    self.inverse_scalar_transform_handle(network_output.value_prefix))
 
                 network_output.reward_hidden_state = (
                     network_output.reward_hidden_state[0].detach().cpu().numpy(),
@@ -446,7 +447,7 @@ class GumbelMuZeroMCTSCtree(object):
         self.inverse_scalar_transform_handle = InverseScalarTransform(
             self._cfg.model.support_scale, self._cfg.device, self._cfg.model.categorical_distribution
         )
-    
+
     @classmethod
     def roots(cls: int, active_collect_env_num: int, legal_actions: List[Any]) -> "gmz_ctree":
         """
@@ -462,8 +463,8 @@ class GumbelMuZeroMCTSCtree(object):
         return tree_gumbel_muzero.Roots(active_collect_env_num, legal_actions)
 
     def search(self, roots: Any, model: torch.nn.Module, latent_state_roots: List[Any], to_play_batch: Union[int,
-                                                                                                          List[Any]]
-    ) -> None:
+    List[Any]]
+               ) -> None:
         """
         Overview:
             Do MCTS for a batch of roots. Parallel in model inference. \
@@ -511,12 +512,14 @@ class GumbelMuZeroMCTSCtree(object):
                 """
                 if self._cfg.env_type == 'not_board_games':
                     latent_state_index_in_search_path, latent_state_index_in_batch, last_actions, virtual_to_play_batch = tree_gumbel_muzero.batch_traverse(
-                        roots, self._cfg.num_simulations, self._cfg.max_num_considered_actions, discount_factor, results, to_play_batch
+                        roots, self._cfg.num_simulations, self._cfg.max_num_considered_actions, discount_factor,
+                        results, to_play_batch
                     )
                 else:
                     # the ``to_play_batch`` is only used in board games, here we need to deepcopy it to avoid changing the original data.
                     latent_state_index_in_search_path, latent_state_index_in_batch, last_actions, virtual_to_play_batch = tree_gumbel_muzero.batch_traverse(
-                        roots, self._cfg.num_simulations, self._cfg.max_num_considered_actions, discount_factor, results, copy.deepcopy(to_play_batch)
+                        roots, self._cfg.num_simulations, self._cfg.max_num_considered_actions, discount_factor,
+                        results, copy.deepcopy(to_play_batch)
                     )
 
                 # obtain the states for leaf nodes

@@ -1,6 +1,7 @@
-from zoo.board_games.gomoku.config.gomoku_muzero_bot_mode_config import main_config, create_config
-from lzero.entry import eval_muzero
 import numpy as np
+
+from lzero.entry import eval_muzero
+from zoo.board_games.gomoku.config.gomoku_muzero_bot_mode_config import main_config, create_config
 
 if __name__ == '__main__':
     """ 

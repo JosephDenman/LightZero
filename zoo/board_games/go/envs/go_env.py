@@ -47,7 +47,7 @@ class GoEnv(BaseEnv):
                 spaces.Dict(
                     {
                         'observation': spaces.Box(low=0, high=1, shape=(self._N, self._N, 17), dtype=bool),
-                        'action_mask': spaces.Box(low=0, high=1, shape=((self._N * self._N) + 1, ), dtype=np.int8)
+                        'action_mask': spaces.Box(low=0, high=1, shape=((self._N * self._N) + 1,), dtype=np.int8)
                     }
                 ) for _ in range(self.num_agents)
             ]

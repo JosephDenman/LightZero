@@ -1,7 +1,7 @@
 import gym
+from ding.envs import DingEnvWrapper
 from easydict import EasyDict
 
-from ding.envs import DingEnvWrapper
 from lzero.envs.wrappers import ActionDiscretizationEnvWrapper, LightZeroEnvWrapper
 
 

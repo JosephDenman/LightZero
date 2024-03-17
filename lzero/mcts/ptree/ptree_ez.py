@@ -441,7 +441,7 @@ def compute_ucb_score(
         value_score = 0
     if value_score > 1:
         value_score = 1
-    
+
     ucb_score = prior_score + value_score
 
     return ucb_score
@@ -603,8 +603,8 @@ def backpropagate(
 
             # true_reward is in the perspective of current player of node
             bootstrap_value = (
-                -true_reward if node.to_play == to_play else true_reward
-            ) + discount_factor * bootstrap_value
+                                  -true_reward if node.to_play == to_play else true_reward
+                              ) + discount_factor * bootstrap_value
 
 
 def batch_backpropagate(

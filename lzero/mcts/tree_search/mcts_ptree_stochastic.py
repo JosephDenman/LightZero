@@ -148,7 +148,8 @@ class StochasticMuZeroMCTSPtree(object):
                 else:
                     # the ``to_play_batch`` is only used in board games, here we need to deepcopy it to avoid changing the original data.
                     results, virtual_to_play_batch = tree_stochastic_muzero.batch_traverse(
-                        roots, pb_c_base, pb_c_init, discount_factor, min_max_stats_lst, results, copy.deepcopy(to_play_batch)
+                        roots, pb_c_base, pb_c_init, discount_factor, min_max_stats_lst, results,
+                        copy.deepcopy(to_play_batch)
                     )
 
                 leaf_nodes, latent_state_index_in_search_path, latent_state_index_in_batch, last_actions = results.nodes, results.latent_state_index_in_search_path, results.latent_state_index_in_batch, results.last_actions
@@ -169,7 +170,7 @@ class StochasticMuZeroMCTSPtree(object):
                 MCTS stage 3: Backup
                    At the end of the simulation, the statistics along the trajectory are updated.
                 """
-                
+
                 # network_output = model.recurrent_inference(latent_states, last_actions)
                 num = len(leaf_nodes)
                 latent_state_batch = [None] * num

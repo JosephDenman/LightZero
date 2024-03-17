@@ -126,5 +126,3 @@ def test_sample_orig_data():
 
     if cfg.policy.use_priority:
         replay_buffer.update_priority(train_data, log_vars['value_priority_orig'])
-
-

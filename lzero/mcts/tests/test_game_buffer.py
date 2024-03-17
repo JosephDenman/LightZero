@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
+from ding.torch_utils import to_list
 from easydict import EasyDict
 
-from ding.torch_utils import to_list
 from lzero.mcts.buffer.game_buffer_efficientzero import EfficientZeroGameBuffer
 
 config = EasyDict(

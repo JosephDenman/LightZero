@@ -68,7 +68,7 @@ cfg = dict(
             gradient_logger=False, video_logger=False, plot_logger=False, action_logger=False, return_logger=False
         ),
     ),
-    create_config = dict(
+    create_config=dict(
         env=dict(
             type='atari_lightzero',
             import_names=['zoo.atari.envs.atari_lightzero_env'],

@@ -8,7 +8,8 @@ from typing import List, Any
 import gymnasium as gym
 import imageio
 import matplotlib
-matplotlib.use('Agg') 
+
+matplotlib.use('Agg')
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -730,7 +731,7 @@ class GomokuEnv(BaseEnv):
             - format (:obj:`str`): The format of the output file. Options are 'gif' or 'mp4'.
         """
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        
+
         # At the end of the episode, save the frames.
         if replay_name_suffix == '':
             if replay_path is None:
@@ -748,7 +749,7 @@ class GomokuEnv(BaseEnv):
             else:
                 if not os.path.exists(replay_path):
                     os.makedirs(replay_path)
-                filename = replay_path+f'/gomoku_{self.board_size}_{replay_name_suffix}.{format}'
+                filename = replay_path + f'/gomoku_{self.board_size}_{replay_name_suffix}.{format}'
 
         self._save_replay_count += 1
 

@@ -19,7 +19,7 @@ elif env_id == 'BreakoutNoFrameskip-v4':
 # ==============================================================
 gpu_num = 2
 collector_env_num = 8
-n_episode = int(8*gpu_num)
+n_episode = int(8 * gpu_num)
 evaluator_env_num = 3
 num_simulations = 50
 update_per_collect = 1000
@@ -114,6 +114,7 @@ if __name__ == "__main__":
     from ding.utils import DDPContext
     from lzero.entry import train_muzero
     from lzero.config.utils import lz_to_ddp_config
+
     with DDPContext():
         main_config = lz_to_ddp_config(main_config)
         train_muzero([main_config, create_config], seed=0, max_env_step=max_env_step)

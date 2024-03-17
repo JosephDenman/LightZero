@@ -14,8 +14,8 @@ import re
 from distutils.core import setup
 
 import numpy as np
-from setuptools import find_packages, Extension
 from Cython.Build import cythonize  # this line should be after 'from setuptools import find_packages'
+from setuptools import find_packages, Extension
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -23,6 +23,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 def _load_req(file: str):
     with open(file, 'r', encoding='utf-8') as f:
         return [line.strip() for line in f.readlines() if line.strip()]
+
 
 requirements = _load_req('requirements.txt')
 
