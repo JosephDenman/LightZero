@@ -583,7 +583,8 @@ class SampledEfficientZeroPolicy(MuZeroPolicy):
         return return_data
 
     def _calculate_policy_loss_cont(
-            self, policy_loss: torch.Tensor, policy_logits: torch.Tensor, target_policy: torch.Tensor,
+            self,
+            policy_loss: torch.Tensor, policy_logits: torch.Tensor, target_policy: torch.Tensor,
             mask_batch: torch.Tensor, child_sampled_actions_batch: torch.Tensor, unroll_step: int
     ) -> Tuple[torch.Tensor]:
         """

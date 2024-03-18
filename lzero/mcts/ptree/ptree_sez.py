@@ -24,7 +24,6 @@ class Node:
             self,
             prior: Union[list, float],
             legal_actions: List = None,
-            action_space_size: int = 9,
             num_of_sampled_actions: int = 20,
             continuous_action_space: bool = False,
     ) -> None:
@@ -42,7 +41,6 @@ class Node:
         self.mu = None
         self.sigma = None
         self.legal_actions = legal_actions
-        self.action_space_size = action_space_size
         self.num_of_sampled_actions = num_of_sampled_actions
         self.continuous_action_space = continuous_action_space
 
@@ -98,6 +96,7 @@ class Node:
         # sampled related core code
         # ==============================================================
         if self.continuous_action_space:
+            # TODO:
             (mu, sigma) = torch.tensor(policy_logits[:self.action_space_size]
                                        ), torch.tensor(policy_logits[-self.action_space_size:])
             self.mu = mu
@@ -116,7 +115,6 @@ class Node:
             for action_index in range(self.num_of_sampled_actions):
                 self.children[Action(sampled_actions[action_index].detach().cpu().numpy())] = Node(
                     log_prob[action_index],
-                    action_space_size=self.action_space_size,
                     num_of_sampled_actions=self.num_of_sampled_actions,
                     continuous_action_space=self.continuous_action_space
                 )
@@ -135,8 +133,7 @@ class Node:
 
             for action_index in range(self.num_of_sampled_actions):
                 self.children[Action(sampled_actions[action_index].detach().cpu().numpy())] = Node(
-                    prob[sampled_actions[action_index]],  #
-                    action_space_size=self.action_space_size,
+                    prob[sampled_actions[action_index]],
                     num_of_sampled_actions=self.num_of_sampled_actions,
                     continuous_action_space=self.continuous_action_space
                 )
@@ -651,14 +648,14 @@ def batch_traverse(
     Overview:
         traverse, also called expansion. Process a batch roots at once.
     Arguments:
-        - roots (:obj:`Any`): A batch of root nodes to be expanded.
+        - roots (:obj:`Any`): A batch of root nodes to be expanded (in our case a batched PyG 'Data' object).
         - pb_c_base (:obj:`float`): Constant c1 used in pUCT rule, typically 1.25.
         - pb_c_init (:obj:`float`): Constant c2 used in pUCT rule, typically 19652.
         - discount_factor (:obj:`float`): The discount factor used in calculating bootstrapped value, if env is board_games, we set discount_factor=1.
         - results (:obj:`SearchResults`): An instance to record the simulation results for all the roots in the batch.
         - virtual_to_play (:obj:`list`): The to_play list used in self_play collecting and training in board games,
             `virtual` is to emphasize that actions are performed on an imaginary hidden state.
-        - continuous_action_space: whether the action space is continous in current env.
+        - continuous_action_space: whether the action space is continuous in current env (in our case false).
     Returns:
         - latent_state_index_in_search_path (:obj:`list`): The list of x/first index of hidden state vector of the searched node, i.e. the search depth.
         - latent_state_index_in_batch (:obj:`list`): The list of y/second index of hidden state vector of the searched node, i.e. the index of batch root node, its maximum is ``batch_size``/``env_num``.

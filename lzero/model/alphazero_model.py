@@ -210,7 +210,6 @@ class PredictionNetwork(nn.Module):
 
     def __init__(
             self,
-            action_space_size: int,
             continuous_action_space: bool,
             num_res_blocks: int,
             num_channels: int,
@@ -292,7 +291,6 @@ class PredictionNetwork(nn.Module):
         if self.continuous_action_space:
             self.fc_policy_head = ReparameterizationHead(
                 input_size=self.flatten_output_size_for_policy_head,
-                output_size=action_space_size,
                 layer_num=len(fc_policy_layers) + 1,
                 sigma_type=self.sigma_type,
                 fixed_sigma_value=self.fixed_sigma_value,
@@ -304,7 +302,6 @@ class PredictionNetwork(nn.Module):
             self.fc_policy_head = MLP(
                 in_channels=self.flatten_output_size_for_policy_head,
                 hidden_channels=fc_policy_layers[0],
-                out_channels=action_space_size,
                 layer_num=len(fc_policy_layers) + 1,
                 activation=activation,
                 norm_type='LN',

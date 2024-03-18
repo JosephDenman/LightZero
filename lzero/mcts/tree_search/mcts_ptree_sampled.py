@@ -117,6 +117,10 @@ class SampledEfficientZeroMCTSPtree(object):
         
         .. note::
             The core functions ``batch_traverse`` and ``batch_backpropagate`` are implemented in Python.
+
+        .. note::
+            - roots: each root is normally a batch of initial state tensors. In our case, we want each root to be a graph,
+                     and roots to be a batched graph (disconnected graph).
         """
         with torch.no_grad():
             model.eval()
