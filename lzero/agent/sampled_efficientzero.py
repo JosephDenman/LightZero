@@ -25,7 +25,7 @@ from lzero.policy.sampled_efficientzero import SampledEfficientZeroPolicy
 from lzero.worker import MuZeroCollector as Collector
 from lzero.worker import MuZeroEvaluator as Evaluator
 
-
+# TODO: This is the agent we would adapt.
 class SampledEfficientZeroAgent:
     """
     Overview:

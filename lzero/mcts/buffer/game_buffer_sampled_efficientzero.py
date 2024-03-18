@@ -570,6 +570,10 @@ class SampledEfficientZeroGameBuffer(EfficientZeroGameBuffer):
                                 policy = [visit_count / sum_visits for visit_count in distributions]
                                 target_policies.append(policy)
                             else:
+                                # TODO: This is the pathway we would use! Does not assume a fixed action space!
+                                #       We would need to modify it to a one-player environment.
+                                # TODO: Since the legal actions at the root cannot be enumerated, can we always pass
+                                #       'None'?
                                 # for two_player board games
                                 policy_tmp = [0 for _ in range(self._cfg.model.num_of_sampled_actions)]
                                 # to make sure target_policies have the same dimension

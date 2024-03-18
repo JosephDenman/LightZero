@@ -6,6 +6,7 @@ import torch.nn as nn
 from ding.model.common import ReparameterizationHead
 from ding.torch_utils import MLP, ResBlock
 from ding.utils import MODEL_REGISTRY, SequenceType
+from torch_geometric.data import HeteroData
 
 from .common import EZNetworkOutput, RepresentationNetwork
 from .efficientzero_model import DynamicsNetwork
@@ -13,6 +14,7 @@ from .utils import renormalize, get_params_mean
 
 
 # use ModelRegistry to register the model, for more details about ModelRegistry, please refer to DI-engine's document.
+# TODO: This is the model we would modify.
 @MODEL_REGISTRY.register('SampledEfficientZeroModel')
 class SampledEfficientZeroModel(nn.Module):
 
@@ -118,8 +120,8 @@ class SampledEfficientZeroModel(nn.Module):
 
         self.continuous_action_space = continuous_action_space
         self.action_space_size = action_space_size
-        # The dim of action space. For discrete action space, it's 1.
-        # For continuous action space, it is the dim of action.
+        # The dimension of action space. For discrete action space, it's 1.
+        # For continuous action space, it is the dimension of action.
         self.action_space_dim = action_space_size if self.continuous_action_space else 1
         assert discrete_action_encoding_type in ['one_hot', 'not_one_hot'], discrete_action_encoding_type
         self.discrete_action_encoding_type = discrete_action_encoding_type
@@ -233,7 +235,8 @@ class SampledEfficientZeroModel(nn.Module):
                 nn.Linear(self.pred_hid, self.pred_out),
             )
 
-    def initial_inference(self, obs: torch.Tensor) -> EZNetworkOutput:
+    # TODO: Modify this function to accept a 'HeteroData' object.
+    def initial_inference(self, obs: HeteroData) -> EZNetworkOutput:
         """
          Overview:
             Initial inference of SampledEfficientZero model, which is the first step of the SampledEfficientZero model.
@@ -272,7 +275,7 @@ class SampledEfficientZeroModel(nn.Module):
         return EZNetworkOutput(value, [0. for _ in range(batch_size)], policy_logits, latent_state, reward_hidden_state)
 
     def recurrent_inference(
-            self, latent_state: torch.Tensor, reward_hidden_state: torch.Tensor, action: torch.Tensor
+            self, latent_state: HeteroData, reward_hidden_state: torch.Tensor, action: torch.Tensor
     ) -> EZNetworkOutput:
         """
         Overview:
@@ -283,7 +286,7 @@ class SampledEfficientZeroModel(nn.Module):
         Arguments:
             - latent_state (:obj:`torch.Tensor`): The encoding latent state of input state.
             - reward_hidden_state (:obj:`Tuple[torch.Tensor]`): The input hidden state of LSTM about reward.
-            - action (:obj:`torch.Tensor`): The predicted action to rollout.
+            - action (:obj:`torch.Tensor`): The predicted action to the rollout.
         Returns (EZNetworkOutput):
             - value (:obj:`torch.Tensor`): The output value of input state to help policy improvement and evaluation.
             - value_prefix (:obj:`torch.Tensor`): The predicted prefix sum of value for input state.
@@ -307,7 +310,7 @@ class SampledEfficientZeroModel(nn.Module):
         policy_logits, value = self._prediction(next_latent_state)
         return EZNetworkOutput(value, value_prefix, policy_logits, next_latent_state, reward_hidden_state)
 
-    def _representation(self, observation: torch.Tensor) -> Tuple[torch.Tensor]:
+    def _representation(self, observation: HeteroData) -> HeteroData:
         """
         Overview:
             Use the representation network to encode the observations into latent state.
@@ -325,7 +328,7 @@ class SampledEfficientZeroModel(nn.Module):
             latent_state = renormalize(latent_state)
         return latent_state
 
-    def _prediction(self, latent_state: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _prediction(self, latent_state: HeteroData) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Overview:
              use the prediction network to predict the "value" and "policy_logits" of the "latent_state".
@@ -342,8 +345,8 @@ class SampledEfficientZeroModel(nn.Module):
         """
         return self.prediction_network(latent_state)
 
-    def _dynamics(self, latent_state: torch.Tensor, reward_hidden_state: Tuple[torch.Tensor],
-                  action: torch.Tensor) -> Tuple[torch.Tensor, Tuple[torch.Tensor], torch.Tensor]:
+    def _dynamics(self, latent_state: HeteroData, reward_hidden_state: Tuple[torch.Tensor],
+                  action: torch.Tensor) -> Tuple[HeteroData, Tuple[torch.Tensor], torch.Tensor]:
         """
         Overview:
             Concatenate ``latent_state`` and ``action`` and use the dynamics network to predict ``next_latent_state``
@@ -351,7 +354,7 @@ class SampledEfficientZeroModel(nn.Module):
         Arguments:
             - latent_state (:obj:`torch.Tensor`): The encoding latent state of input state.
             - reward_hidden_state (:obj:`Tuple[torch.Tensor]`): The input hidden state of LSTM about reward.
-            - action (:obj:`torch.Tensor`): The predicted action to rollout.
+            - action (:obj:`torch.Tensor`): The predicted action to the rollout.
         Returns:
             - next_latent_state (:obj:`torch.Tensor`): The predicted latent state of the next timestep.
             - next_reward_hidden_state (:obj:`Tuple[torch.Tensor]`): The output hidden state of LSTM about reward.
@@ -436,7 +439,7 @@ class SampledEfficientZeroModel(nn.Module):
             next_latent_state_normalized = renormalize(next_latent_state)
             return next_latent_state_normalized, next_reward_hidden_state, value_prefix
 
-    def project(self, latent_state: torch.Tensor, with_grad=True) -> torch.Tensor:
+    def project(self, latent_state: HeteroData, with_grad=True) -> HeteroData:
         """
         Overview:
             Project the latent state to a lower dimension to calculate the self-supervised loss, which is proposed in EfficientZero.
@@ -527,7 +530,7 @@ class PredictionNetwork(nn.Module):
             - flatten_output_size_for_value_head (:obj:`int`): dim of flatten hidden states.
             - flatten_output_size_for_policy_head (:obj:`int`): dim of flatten hidden states.
             - downsample (:obj:`bool`): Whether to do downsampling for observations in ``representation_network``.
-            - last_linear_layer_init_zero (:obj:`bool`): Whether to use zero initializationss for the last layer of value/policy mlp, default sets it to True.
+            - last_linear_layer_init_zero (:obj:`bool`): Whether to use zero initializations for the last layer of value/policy mlp, default sets it to True.
             # ==============================================================
             # specific sampled related config
             # ==============================================================
@@ -547,7 +550,7 @@ class PredictionNetwork(nn.Module):
         self.bound_type = bound_type
         self.activation = activation
 
-        self.resblocks = nn.ModuleList(
+        self.residual_blocks = nn.ModuleList(
             [
                 ResBlock(
                     in_channels=num_channels,
@@ -626,7 +629,7 @@ class PredictionNetwork(nn.Module):
             - value (:obj:`torch.Tensor`): value tensor with shape (B, output_support_size).
         """
 
-        for res_block in self.resblocks:
+        for res_block in self.residual_blocks:
             latent_state = res_block(latent_state)
         value = self.conv1x1_value(latent_state)
         value = self.norm_value(value)

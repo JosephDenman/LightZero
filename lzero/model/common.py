@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 from ding.torch_utils import MLP, ResBlock
 from ding.utils import SequenceType
+from torch_geometric.data import HeteroData
 
 
 # use dataclass to make the output of network more convenient to use
@@ -23,7 +24,8 @@ class EZNetworkOutput:
     value: torch.Tensor
     value_prefix: torch.Tensor
     policy_logits: torch.Tensor
-    latent_state: torch.Tensor
+    # TODO: the latent state should always be the actual result of applying an action.
+    latent_state: HeteroData
     reward_hidden_state: Tuple[torch.Tensor]
 
 
@@ -198,7 +200,7 @@ class RepresentationNetwork(nn.Module):
         )
         self.activation = activation
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: HeteroData) -> torch.Tensor:
         """
         Shapes:
             - x (:obj:`torch.Tensor`): :math:`(B, C_in, W, H)`, where B is batch size, C_in is channel, W is width, \
@@ -241,7 +243,7 @@ class RepresentationNetworkMLP(nn.Module):
             activation: Optional[nn.Module] = nn.ReLU(inplace=True),
             last_linear_layer_init_zero: bool = True,
             norm_type: Optional[str] = 'BN',
-    ) -> torch.Tensor:
+    ):
         """
         Overview:
             Representation network used in MuZero and derived algorithms. Encode the vector obs into latent state \

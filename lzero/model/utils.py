@@ -8,9 +8,10 @@ from typing import List, Tuple
 import numpy as np
 import torch
 import torch.nn as nn
+from torch_geometric.data import HeteroData
 
 
-def renormalize(inputs: torch.Tensor, first_dim: int = 1) -> torch.Tensor:
+def renormalize(inputs: HeteroData, first_dim: int = 1) -> HeteroData:
     """
     Overview:
         Normalize the input data using the max-min-normalization.
