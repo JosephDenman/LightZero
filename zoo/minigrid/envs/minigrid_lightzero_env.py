@@ -10,15 +10,14 @@ from ding.envs import BaseEnvTimestep
 from ding.envs import ObsPlusPrevActRewWrapper
 from ding.torch_utils import to_ndarray
 from ding.utils import ENV_REGISTRY
-from dizoo.minigrid.envs.minigrid_env import MiniGridEnv
 from dizoo.minigrid.envs.minigrid_wrapper import ViewSizeWrapper
 from easydict import EasyDict
 from matplotlib import animation
 from minigrid.wrappers import FlatObsWrapper
 
 
-@ENV_REGISTRY.register('minigrid_lightzero')
-class MiniGridEnvLightZero(MiniGridEnv):
+@ENV_REGISTRY.register('zx_lightzero')
+class ZXEnvLightZero:
     """
     Overview:
         A MiniGrid environment for LightZero, based on OpenAI Gym.
@@ -33,7 +32,7 @@ class MiniGridEnvLightZero(MiniGridEnv):
     """
     config = dict(
         # (str) The gym environment name.
-        env_id='MiniGrid-Empty-8x8-v0',
+        env_id='azx',
         # (bool) If True, save the replay as a gif file.
         save_replay_gif=False,
         # (str or None) The path to save the replay gif. If None, the replay gif will not be saved.
