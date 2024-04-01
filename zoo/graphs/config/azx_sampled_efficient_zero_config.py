@@ -41,7 +41,7 @@ azx_sampled_efficient_zero_config = dict(
     ),
     policy=dict(
         model=dict(
-            observation_shape=2835,
+            observation_shape='hdata',
             action_space_size=7,
             continuous_action_space=continuous_action_space,
             num_of_sampled_actions=K,
