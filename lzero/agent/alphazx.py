@@ -1,3 +1,4 @@
+import copy
 import os
 from functools import partial
 from typing import Optional, Union, List
@@ -9,28 +10,23 @@ from ding.config import save_config_py, compile_config
 from ding.envs import create_env_manager
 from ding.envs import get_vec_env_setting
 from ding.policy import create_policy
-from ding.rl_utils import get_epsilon_greedy_fn
 from ding.utils import set_pkg_seed, get_rank
-from ding.worker import BaseLearner
+from ding.worker import BaseLearner, create_buffer
 from ditk import logging
 from easydict import EasyDict
 from tensorboardX import SummaryWriter
 
-from lzero.agent.config.sampled_efficientzero import supported_env_cfg
-from lzero.entry.utils import log_buffer_memory_usage, random_collect
-from lzero.mcts import SampledEfficientZeroGameBuffer
+from lzero.agent.config.alphazero import supported_env_cfg
 from lzero.policy import visit_count_temperature
-from lzero.policy.random_policy import LightZeroRandomPolicy
-from lzero.policy.sampled_efficientzero import SampledEfficientZeroPolicy
-from lzero.worker import MuZeroCollector as Collector
-from lzero.worker import MuZeroEvaluator as Evaluator
+from lzero.policy.alphazx import AlphaZXPolicy
+from lzero.worker import AlphaZXCollector as Collector
+from lzero.worker import AlphaZXEvaluator as Evaluator
 
 
-# TODO: This is the agent we would adapt.
-class SampledAZXAgent:
+class AlphaZXAgent:
     """
     Overview:
-        Agent class for executing Sampled EfficientZero algorithms which include methods for training, deployment, and batch evaluation.
+        Agent class for executing AlphaZero algorithms which include methods for training, deployment, and batch evaluation.
     Interfaces:
         ``__init__``, ``train``, ``deploy``, ``batch_evaluate``
     Properties:
@@ -38,7 +34,7 @@ class SampledAZXAgent:
 
     .. note::
         This agent class is tailored for use with the HuggingFace Model Zoo for LightZero
-        (e.g. https://huggingface.co/OpenDILabCommunity/CartPole-v0-SampledEfficientZero),
+        (e.g. https://huggingface.co/OpenDILabCommunity/CartPole-v0-AlphaZero),
          and provides methods such as "train" and "deploy".
     """
 
@@ -55,7 +51,7 @@ class SampledAZXAgent:
     ) -> None:
         """
         Overview:
-            Initialize the SampledEfficientZeroAgent instance with environment parameters, model, and configuration.
+            Initialize the AlphaZXAgent instance with environment parameters, model, and configuration.
         Arguments:
             - env_id (:obj:`str`): Identifier for the environment to be used, registered in gym.
             - seed (:obj:`int`): Random seed for reproducibility. Defaults to 0.
@@ -74,8 +70,8 @@ class SampledAZXAgent:
             cfg = EasyDict(cfg)
 
         if env_id is not None:
-            assert env_id in SampledAZXAgent.supported_env_list, "Please use supported envs: {}".format(
-                SampledAZXAgent.supported_env_list
+            assert env_id in AlphaZXAgent.supported_env_list, "Please use supported envs: {}".format(
+                AlphaZXAgent.supported_env_list
             )
             if cfg is None:
                 cfg = supported_env_cfg[env_id]
@@ -83,10 +79,10 @@ class SampledAZXAgent:
                 assert cfg.main_config.env.env_id == env_id, "env_id in cfg should be the same as env_id in args."
         else:
             assert hasattr(cfg.main_config.env, "env_id"), "Please specify env_id in cfg."
-            assert cfg.main_config.env.env_id in SampledAZXAgent.supported_env_list, "Please use supported envs: {}".format(
-                SampledAZXAgent.supported_env_list
+            assert cfg.main_config.env.env_id in AlphaZXAgent.supported_env_list, "Please use supported envs: {}".format(
+                AlphaZXAgent.supported_env_list
             )
-        default_policy_config = EasyDict({"policy": SampledEfficientZeroPolicy.default_config()})
+        default_policy_config = EasyDict({"policy": AlphaZXPolicy.default_config()})
         default_policy_config.policy.update(cfg.main_config.policy)
         cfg.main_config.policy = default_policy_config.policy
 
@@ -94,8 +90,7 @@ class SampledAZXAgent:
             cfg.main_config.exp_name = exp_name
         self.origin_cfg = cfg
         self.cfg = compile_config(
-            cfg.main_config, seed=seed, env=None, auto=True, policy=SampledEfficientZeroPolicy,
-            create_cfg=cfg.create_config
+            cfg.main_config, seed=seed, env=None, auto=True, policy=AlphaZXPolicy, create_cfg=cfg.create_config
         )
         self.exp_name = self.cfg.exp_name
 
@@ -106,14 +101,9 @@ class SampledAZXAgent:
             os.makedirs(self.exp_name)
         save_config_py(cfg, os.path.join(self.exp_name, 'policy_config.py'))
         if model is None:
-            if self.cfg.policy.model.model_type == 'mlp':
-                from lzero.model.sampled_efficientzero_model_mlp import SampledEfficientZeroModelMLP
-                model = SampledEfficientZeroModelMLP(**self.cfg.policy.model)
-            elif self.cfg.policy.model.model_type == 'conv':
-                from lzero.model.sampled_efficientzero_model import SampledEfficientZeroModel
-                model = SampledEfficientZeroModel(**self.cfg.policy.model)
-            else:
-                raise NotImplementedError
+            from lzero.model.alphazero_model import AlphaZeroModel
+            model = AlphaZeroModel(**self.cfg.policy.model)
+
         if self.cfg.policy.cuda and torch.cuda.is_available():
             self.cfg.policy.device = 'cuda'
         else:
@@ -157,20 +147,19 @@ class SampledAZXAgent:
         learner = BaseLearner(
             self.cfg.policy.learn.learner, self.policy.learn_mode, tb_logger, exp_name=self.cfg.exp_name
         )
+        replay_buffer = create_buffer(self.cfg.policy.other.replay_buffer, tb_logger=tb_logger,
+                                      exp_name=self.cfg.exp_name)
 
         # ==============================================================
         # MCTS+RL algorithms related core code
         # ==============================================================
         policy_config = self.cfg.policy
         batch_size = policy_config.batch_size
-        # specific game buffer for MCTS+RL algorithms
-        replay_buffer = SampledEfficientZeroGameBuffer(policy_config)
         collector = Collector(
             env=collector_env,
             policy=self.policy.collect_mode,
             tb_logger=tb_logger,
             exp_name=self.cfg.exp_name,
-            policy_config=policy_config
         )
         evaluator = Evaluator(
             eval_freq=self.cfg.policy.eval_freq,
@@ -180,7 +169,6 @@ class SampledAZXAgent:
             policy=self.policy.eval_mode,
             tb_logger=tb_logger,
             exp_name=self.cfg.exp_name,
-            policy_config=policy_config
         )
 
         # ==============================================================
@@ -192,34 +180,14 @@ class SampledAZXAgent:
         if self.cfg.policy.update_per_collect is not None:
             update_per_collect = self.cfg.policy.update_per_collect
 
-        # The purpose of collecting random data before training:
-        # Exploration: Collecting random data helps the agent explore the environment and avoid getting stuck in a suboptimal policy prematurely.
-        # Comparison: By observing the agent's performance during random action-taking, we can establish a baseline to evaluate the effectiveness of reinforcement learning algorithms.
-        if self.cfg.policy.random_collect_episode_num > 0:
-            random_collect(self.cfg.policy, self.policy, LightZeroRandomPolicy, collector, collector_env, replay_buffer)
-
         while True:
-            log_buffer_memory_usage(learner.train_iter, replay_buffer, tb_logger)
             collect_kwargs = {}
-            # set temperature for visit count distributions according to the train_iter,
-            # please refer to Appendix D in MuZero paper for details.
             collect_kwargs['temperature'] = visit_count_temperature(
                 policy_config.manual_temperature_decay,
                 policy_config.fixed_temperature_value,
                 policy_config.threshold_training_steps_for_final_temperature,
                 trained_steps=learner.train_iter
             )
-
-            if policy_config.eps.eps_greedy_exploration_in_collect:
-                epsilon_greedy_fn = get_epsilon_greedy_fn(
-                    start=policy_config.eps.start,
-                    end=policy_config.eps.end,
-                    decay=policy_config.eps.decay,
-                    type_=policy_config.eps.type
-                )
-                collect_kwargs['epsilon'] = epsilon_greedy_fn(collector.envstep)
-            else:
-                collect_kwargs['epsilon'] = 0.0
 
             # Evaluate policy performance.
             if evaluator.should_eval(learner.train_iter):
@@ -229,34 +197,26 @@ class SampledAZXAgent:
 
             # Collect data by default config n_sample/n_episode.
             new_data = collector.collect(train_iter=learner.train_iter, policy_kwargs=collect_kwargs)
+            new_data = sum(new_data, [])
+
             if self.cfg.policy.update_per_collect is None:
                 # update_per_collect is None, then update_per_collect is set to the number of collected transitions multiplied by the model_update_ratio.
-                collected_transitions_num = sum([len(game_segment) for game_segment in new_data[0]])
+                collected_transitions_num = len(new_data)
                 update_per_collect = int(collected_transitions_num * self.cfg.policy.model_update_ratio)
-            # save returned new_data collected by the collector
-            replay_buffer.push_game_segments(new_data)
-            # remove the oldest data if the replay buffer is full.
-            replay_buffer.remove_oldest_data_to_fit()
+            replay_buffer.push(new_data, cur_collector_envstep=collector.envstep)
 
-            # Learn policy from collected data.
+            # Learn policy from collected data
             for i in range(update_per_collect):
                 # Learner will train ``update_per_collect`` times in one iteration.
-                if replay_buffer.get_num_of_transitions() > batch_size:
-                    train_data = replay_buffer.sample(batch_size, self.policy)
-                else:
+                train_data = replay_buffer.sample(batch_size, learner.train_iter)
+                if train_data is None:
                     logging.warning(
-                        f'The data in replay_buffer is not sufficient to sample a mini-batch: '
-                        f'batch_size: {batch_size}, '
-                        f'{replay_buffer} '
-                        f'continue to collect now ....'
+                        'The data in replay_buffer is not sufficient to sample a mini-batch.'
+                        'continue to collect now ....'
                     )
                     break
 
-                # The core train steps for MCTS+RL algorithms.
-                log_vars = learner.train(train_data, collector.envstep)
-
-                if self.cfg.policy.use_priority:
-                    replay_buffer.update_priority(train_data, log_vars[0]['value_priority_orig'])
+                learner.train(train_data, collector.envstep)
 
             if collector.envstep >= step:
                 break
@@ -289,7 +249,7 @@ class SampledAZXAgent:
             - An `EvalReturn` object containing evaluation metrics such as mean and standard deviation of returns.
         """
 
-        deply_configs = [self.evaluator_env_cfg[0]]
+        deply_configs = [copy.deepcopy(self.evaluator_env_cfg[0])]
 
         if type(seed) == int:
             seed_list = [seed]
@@ -316,7 +276,6 @@ class SampledAZXAgent:
             # ==============================================================
             # MCTS+RL algorithms related core code
             # ==============================================================
-            policy_config = self.cfg.policy
 
             evaluator = Evaluator(
                 eval_freq=self.cfg.policy.eval_freq,
@@ -325,7 +284,6 @@ class SampledAZXAgent:
                 env=evaluator_env,
                 policy=self.policy.eval_mode,
                 exp_name=self.cfg.exp_name,
-                policy_config=policy_config
             )
 
             # ==============================================================
@@ -339,7 +297,7 @@ class SampledAZXAgent:
             if not os.path.exists(replay_save_path):
                 os.makedirs(replay_save_path)
             files = os.listdir(replay_save_path)
-            files = [file for file in files if file.endswith('.mp4')]
+            files = [file for file in files if file.endswith('0.mp4')]
             files.sort()
             if concatenate_all_replay:
                 # create a file named 'files.txt' to store the names of all mp4 files
@@ -382,7 +340,6 @@ class SampledAZXAgent:
         # ==============================================================
         # MCTS+RL algorithms related core code
         # ==============================================================
-        policy_config = self.cfg.policy
 
         evaluator = Evaluator(
             eval_freq=self.cfg.policy.eval_freq,
@@ -392,7 +349,6 @@ class SampledAZXAgent:
             env=evaluator_env,
             policy=self.policy.eval_mode,
             exp_name=self.cfg.exp_name,
-            policy_config=policy_config
         )
 
         # ==============================================================

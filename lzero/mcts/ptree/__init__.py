@@ -1,1 +1,1 @@
-from .minimax import *
+from lzero.mcts.ptree.minimax import *

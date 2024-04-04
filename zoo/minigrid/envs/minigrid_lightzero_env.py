@@ -32,7 +32,7 @@ class ZXEnvLightZero:
     """
     config = dict(
         # (str) The gym environment name.
-        env_id='azx',
+        env_id='alphazx',
         # (bool) If True, save the replay as a gif file.
         save_replay_gif=False,
         # (str or None) The path to save the replay gif. If None, the replay gif will not be saved.

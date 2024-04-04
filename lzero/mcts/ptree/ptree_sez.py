@@ -8,7 +8,7 @@ from typing import List, Any, Tuple, Union
 import torch
 from torch.distributions import Normal, Independent
 
-from .minimax import MinMaxStats
+from lzero.mcts.ptree.minimax import MinMaxStats
 
 
 class Node:
@@ -840,76 +840,3 @@ def batch_backpropagate(
             backpropagate(
                 results.search_paths[i], min_max_stats_lst.stats_lst[i], to_play[i], values[i], discount_factor
             )
-
-
-from typing import Union
-import numpy as np
-
-
-class Action:
-    """
-    Overview:
-        Class that represents an action of the game.
-    """
-
-    def __init__(self, value: Union[int, np.ndarray]) -> None:
-        """
-        Overview:
-            Initializes the Action with the given value.
-        Arguments:
-            - value (:obj:`Union[int, np.ndarray]`): The value of the action. Can be either an integer or a numpy array.
-        """
-        self.value = value
-
-    def __hash__(self) -> int:
-        """
-        Overview:
-            Returns a hash of the Action's value. \
-            If the value is a numpy array, it is flattened to a tuple and then hashed. \
-            If the value is a single integer, it is hashed directly. 
-        Returns:
-            hash (:obj:`int`): The hash of the Action's value.
-        """
-        if isinstance(self.value, np.ndarray):
-            if self.value.ndim == 0:
-                return hash(self.value.item())
-            else:
-                return hash(tuple(self.value.flatten()))
-        else:
-            return hash(self.value)
-
-    def __eq__(self, other: "Action") -> bool:
-        """
-        Overview:
-            Determines if this Action is equal to another Action. \
-            If both values are numpy arrays, they are compared element-wise. \
-            Otherwise, they are compared directly.
-        Arguments:
-            - other (:obj:`Action`): The Action to compare with.
-        Returns:
-            - bool (:obj:`bool`): True if the two Actions are equal, False otherwise.
-        """
-        if isinstance(self.value, np.ndarray) and isinstance(other.value, np.ndarray):
-            return np.array_equal(self.value, other.value)
-        else:
-            return self.value == other.value
-
-    def __gt__(self, other: "Action") -> bool:
-        """
-        Overview:
-            Determines if this Action's value is greater than another Action's value.
-        Arguments:
-            - other (:obj:`Action`): The Action to compare with.
-        Returns:
-            - bool (:obj:`bool`): True if the two Actions are equal, False otherwise.
-        """
-        return self.value > other.value
-
-    def __repr__(self) -> str:
-        """
-        Overview:
-            Returns a string representation of this Action.
-        Returns:
-            - str (:obj:`str`): A string representation of the Action's value.
-        """
-        return str(self.value)
