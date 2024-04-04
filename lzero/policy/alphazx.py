@@ -9,7 +9,7 @@ from ding.policy.base_policy import Policy
 from ding.torch_utils import to_device
 from ding.utils import POLICY_REGISTRY
 from ding.utils.data import default_collate
-from src.distributions.alpha_zx_dist import AlphaZXDistribution
+from alphazx.distributions.alpha_zx_dist import AlphaZXDistribution
 
 from lzero.policy import configure_optimizers
 from lzero.policy.utils import pad_and_get_lengths

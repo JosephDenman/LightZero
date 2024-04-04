@@ -1,14 +1,18 @@
 import copy
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 import networkx as nx
+from alphazx.diagram.feature_conversions import cat_phase_to_float, cat_new_edges_to_int, \
+    bernoulli_transfer_edges_to_set
+from alphazx.diagram.match import Match, FRightXMatch, FLeftXMatch, BRightMatch, BLeftMatch, YRightZMatch, YLeftZMatch, \
+    YRightXMatch, YLeftXMatch, FLeftZMatch, FRightZMatch
 from ding.envs import BaseEnv
 from ding.utils import ENV_REGISTRY
 from easydict import EasyDict
-from src.diagram.diagram_generators import clifford_zx_diagram
-from src.diagram.zx_match_diagram import to_zx_match_diagram
-from src.game.zx_game import diagram_value
-from src.rewriting.util import rewrite
+from alphazx.diagram.diagram_generators import clifford_zx_diagram
+from alphazx.diagram.zx_match_diagram import to_zx_match_diagram, HeteroDataIndexToMatch
+from alphazx.game.zx_game import diagram_value, assert_correct_match_instance
+from alphazx.rewriting.util import rewrite, FRightParameters
 
 
 @ENV_REGISTRY.register('alphazx')
@@ -66,6 +70,7 @@ class AlphaZXEnv(BaseEnv):
         self.step_penalty = cfg.step_penalty
         self.zx_diagram = clifford_zx_diagram(self.num_qubits, self.depth, self.t_gates)
         self.zx_match_diagram = to_zx_match_diagram(self.zx_diagram)
+        self.hdata_node_index: Optional[HeteroDataIndexToMatch] = None
         self.previous_value = diagram_value(self.zx_diagram)
         self.episode_return = 0
         self.episode_length = 0
@@ -120,9 +125,52 @@ class AlphaZXEnv(BaseEnv):
         return -self.zx_diagram.number_of_nodes() - sum(
             [1 if p % 0.5 != 0 else 0 for p in self.zx_diagram.phases().values()]) - len(self.zx_diagram.edges())
 
+    def __action_to_match(self, action: tuple) -> Tuple[Match, Optional[FRightParameters]]:
+        action_type = action[0]
+        node = action[1]
+        if self.hdata_node_index is not None:
+            match = self.hdata_node_index[(action_type, node)]
+        else:
+            raise Exception("Expected 'hdata_node_index' to be defined")
+        if action_type == FRightZMatch.index:
+            assert_correct_match_instance(FRightZMatch, match)
+            phase = cat_phase_to_float(action[2], self.zx_match_diagram.phase_denominator)
+            new_edges = cat_new_edges_to_int(action[3])
+            transfer_edges = bernoulli_transfer_edges_to_set(self.zx_match_diagram, action[4:])
+            return match, FRightParameters(phase, new_edges, transfer_edges)
+        elif action_type == FLeftZMatch.index:
+            assert_correct_match_instance(FLeftZMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == FRightXMatch.index:
+            assert_correct_match_instance(FRightXMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == FLeftXMatch.index:
+            assert_correct_match_instance(FLeftXMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == BRightMatch.index:
+            assert_correct_match_instance(BRightMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == BLeftMatch.index:
+            assert_correct_match_instance(BLeftMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == YRightZMatch.index:
+            assert_correct_match_instance(YRightZMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == YLeftZMatch.index:
+            assert_correct_match_instance(YLeftZMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == YRightXMatch.index:
+            assert_correct_match_instance(YRightXMatch, match)
+            raise Exception('Not implemented')
+        elif action_type == YLeftXMatch.index:
+            assert_correct_match_instance(YLeftXMatch, match)
+            raise Exception('Not implemented')
+        else:
+            raise ValueError(f'Unexpected action type {action_type}')
+
     def step(self, action: tuple) -> 'BaseEnv.timestep':
         self.episode_length += 1
-        match, params = tuple_to_match(self.zx_match_diagram, action)
+        match, params = self.__action_to_match(action)
         rewrite(self.zx_diagram, match, params)
         self.__remove_isolated_nodes()
         self.__remove_self_loop_edges()
@@ -133,8 +181,10 @@ class AlphaZXEnv(BaseEnv):
         self.episode_return += self.previous_reward
         self.previous_value = current_value
         self.zx_match_diagram = to_zx_match_diagram(self.zx_diagram)
+        hdata, hdata_node_index = self.zx_match_diagram.to_pyg_hdata(True)
+        self.hdata_node_index = hdata_node_index
         return {
-            'observation': self.zx_match_diagram.to_pyg_hdata(),
+            'observation': hdata,
             'reward': self.previous_reward,
             'done': self.done,
         }
@@ -151,5 +201,5 @@ class AlphaZXEnv(BaseEnv):
         cfg.cfg_type = cls.__name__ + 'Dict'
         return cfg
 
-    def get_done_reward(self) -> tuple[bool, Optional[float]]:
+    def get_done_reward(self) -> Tuple[bool, Optional[float]]:
         return self.done, self.done_reward if self.done is True else None
