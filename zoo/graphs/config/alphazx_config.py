@@ -1,103 +1,101 @@
 from easydict import EasyDict
 
-# The typical MiniGrid env id: {'MiniGrid-Empty-8x8-v0', 'MiniGrid-FourRooms-v0', 'MiniGrid-DoorKey-8x8-v0','MiniGrid-DoorKey-16x16-v0'},
-# please refer to https://github.com/Farama-Foundation/MiniGrid for details.
-env_id = 'alphazx'
-max_env_step = int(1e6)
 # ==============================================================
 # begin of the most frequently changed config specified by the user
 # ==============================================================
-seed = 0
-
 collector_env_num = 9
-n_episode = 9
-evaluator_env_num = 4
-continuous_action_space = False
-K = 50  # num_of_sampled_actions
+n_episode = 8
+evaluator_env_num = 6
 num_simulations = 50
-update_per_collect = 200
-batch_size = 32
+update_per_collect = 50
+batch_size = 256
+max_env_step = int(1e6)
+model_path = None
+mcts_ctree = False
 
-reanalyze_ratio = 0
-random_collect_episode_num = 0
-td_steps = 5
-policy_entropy_loss_weight = 0.
-threshold_training_steps_for_final_temperature = int(5e5)
-eps_greedy_exploration_in_collect = False
 # ==============================================================
 # end of the most frequently changed config specified by the user
 # ==============================================================
-
 alphazx_config = dict(
-    exp_name=f'data_sez_ctree/{env_id}_alphazx_zero_ns{num_simulations}_upc{update_per_collect}_rr{reanalyze_ratio}_seed{seed}',
+    exp_name='data_alphazx_ptree/alphazx-mode_eval-by-rule-bot_seed0',
     env=dict(
-        env_id=env_id,
-        continuous=False,
-        manually_discretization=False,
+        battle_mode='self_play_mode',
+        bot_action_type='rule',
+        channel_last=False,
         collector_env_num=collector_env_num,
         evaluator_env_num=evaluator_env_num,
         n_evaluator_episode=evaluator_env_num,
         manager=dict(shared_memory=False, ),
+        # ==============================================================
+        # for the creation of simulation env
+        agent_vs_human=False,
+        prob_random_agent=0,
+        prob_expert_agent=0,
+        prob_random_action_in_bot=0,
+        scale=True,
+        screen_scaling=9,
+        render_mode=None,
+        replay_path=None,
+        alphazx_mcts_ctree=mcts_ctree,
+        # ==============================================================
     ),
     policy=dict(
+        mcts_ctree=mcts_ctree,
+        # ==============================================================
+        # for the creation of simulation env
+        simulation_env_id='alphazx',
+        simulation_env_config_type='self_play',
+        # ==============================================================
         model=dict(
             observation_shape='hdata',
-            action_space_size=7,
-            continuous_action_space=continuous_action_space,
-            num_of_sampled_actions=K,
-            model_type='mlp',
-            lstm_hidden_size=256,
-            latent_state_dim=256,
-            discrete_action_encoding_type='one_hot',
-            norm_type='BN',
+            action_space_size=5,
+            num_res_blocks=1,
+            num_channels=64,
         ),
-        policy_entropy_loss_weight=policy_entropy_loss_weight,
-        eps=dict(
-            eps_greedy_exploration_in_collect=eps_greedy_exploration_in_collect,
-            decay=int(2e5),
-        ),
-        td_steps=td_steps,
-        manual_temperature_decay=True,
-        threshold_training_steps_for_final_temperature=threshold_training_steps_for_final_temperature,
         cuda=True,
-        env_type='not_board_games',
-        game_segment_length=50,
+        env_type='graphs',
+        action_type='varied_action_space',
         update_per_collect=update_per_collect,
         batch_size=batch_size,
         optim_type='Adam',
         lr_piecewise_constant_decay=False,
         learning_rate=0.003,
-        num_simulations=num_simulations,
-        reanalyze_ratio=reanalyze_ratio,
+        grad_clip_value=0.5,
+        value_weight=1.0,
+        entropy_weight=0.0,
         n_episode=n_episode,
-        eval_freq=int(2e2),
-        replay_buffer_size=int(1e6),  # the size/capacity of replay_buffer, in the terms of transitions.
+        eval_freq=int(2e3),
+        mcts=dict(num_simulations=num_simulations),
         collector_env_num=collector_env_num,
         evaluator_env_num=evaluator_env_num,
     ),
 )
 
-minigrid_sampled_efficient_zero_config = EasyDict(minigrid_sampled_efficientzero_config)
-main_config = minigrid_sampled_efficientzero_config
+alphazx_config = EasyDict(alphazx_config)
+main_config = alphazx_config
 
-minigrid_sampled_efficient_zero_create_config = dict(
+alphazx_create_config = dict(
     env=dict(
-        type='minigrid_lightzero',
-        import_names=['zoo.minigrid.envs.minigrid_lightzero_env'],
+        type='alphazx',
+        import_names=['zoo.graphs.envs.alphazx_env'],
     ),
     env_manager=dict(type='subprocess'),
     policy=dict(
-        type='sampled_efficient_zero',
-        import_names=['lzero.policy.sampled_efficient_zero'],
+        type='alphazx',
+        import_names=['lzero.policy.alphazx'],
     ),
     collector=dict(
-        type='episode_muzero',
-        import_names=['lzero.worker.muzero_collector'],
+        type='episode_alphazx',
+        import_names=['lzero.worker.alphazx_collector'],
+    ),
+    evaluator=dict(
+        type='alphazx',
+        import_names=['lzero.worker.alphazx_evaluator'],
     )
 )
-minigrid_sampled_efficient_zero_create_config = EasyDict(minigrid_sampled_efficient_zero_create_config)
-create_config = minigrid_sampled_efficient_zero_create_config
+alphazx_create_config = EasyDict(alphazx_create_config)
+create_config = alphazx_create_config
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     from lzero.entry import train_alphazx
-    train_alphazx((main_config, create_config), seed=seed, max_env_step=max_env_step)
+    train_alphazx([main_config, create_config], seed=0, model_path=model_path, max_env_step=max_env_step)
