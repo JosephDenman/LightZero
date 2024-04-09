@@ -16,7 +16,7 @@ from ditk import logging
 from easydict import EasyDict
 from tensorboardX import SummaryWriter
 
-from lzero.agent.config.alphazero import supported_env_cfg
+from lzero.agent.config.alphazx import supported_env_cfg
 from lzero.policy import visit_count_temperature
 from lzero.policy.alphazx import AlphaZXPolicy
 from lzero.worker import AlphaZXCollector as Collector
@@ -26,16 +26,11 @@ from lzero.worker import AlphaZXEvaluator as Evaluator
 class AlphaZXAgent:
     """
     Overview:
-        Agent class for executing AlphaZero algorithms which include methods for training, deployment, and batch evaluation.
+        Agent class for executing AlphaZX algorithms which include methods for training, deployment, and batch evaluation.
     Interfaces:
         ``__init__``, ``train``, ``deploy``, ``batch_evaluate``
     Properties:
         ``best``
-
-    .. note::
-        This agent class is tailored for use with the HuggingFace Model Zoo for LightZero
-        (e.g. https://huggingface.co/OpenDILabCommunity/CartPole-v0-AlphaZero),
-         and provides methods such as "train" and "deploy".
     """
 
     supported_env_list = list(supported_env_cfg.keys())

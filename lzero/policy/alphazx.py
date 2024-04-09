@@ -35,12 +35,9 @@ class AlphaZXPolicy(Policy):
         torch_compile=False,
         # (bool) Whether to use TF32 for our model.
         tensor_float_32=False,
-        model=dict(
-            # (int) The number of channels of hidden states in AlphaZX model.
-            num_channels=32,
-        ),
+        model=dict(),
         # (bool) Whether to use C++ MCTS in policy. If False, use Python implementation.
-        mcts_ctree=True,
+        mcts_ctree=False,
         # (bool) Whether to use cuda for network.
         cuda=False,
         # (int) How many updates(iterations) to train after collector's one collection.
@@ -371,16 +368,16 @@ class AlphaZXPolicy(Policy):
     @torch.no_grad()
     def _policy_value_func(self, environment: 'Environment') -> tuple[list[list], float]:
         # Retrieve the current state and its scale from the environment
-        current_state, state_scale = environment.current_state()
+        current_state, state_scaled = environment.current_state()
 
         # Convert the state scale to a PyTorch FloatTensor, adding a dimension to match the model's input requirements
-        state_scale_tensor = torch.from_numpy(state_scale).to(
-            device=self._device, dtype=torch.float
-        ).unsqueeze(0)
+        # TODO: Use 'state_scaled' instead of 'current_state' here?
+        # TODO: If 'x_dict' and 'edge_index_dict' are returned instead, add a 'dtype=torch.float' option to the 'to' call.
+        current_state = current_state.to(device=self._device)
 
         # Compute policy parameters and state value for the current state using the policy model, without gradient computation
         with torch.no_grad():
-            policy_parameters, state_value = self._policy_model.compute_policy_value(state_scale_tensor)
+            policy_parameters, state_value = self._policy_model.compute_policy_value(current_state)
         sampled_actions = AlphaZXDistribution(policy_parameters).sample(self._cfg.mcts.num_of_sampled_actions).tolist()
         return sampled_actions, state_value.item()
 

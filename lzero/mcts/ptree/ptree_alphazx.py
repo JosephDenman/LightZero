@@ -11,11 +11,10 @@ Overview:
 """
 
 import math
-from typing import Tuple, Callable, Type, Any, Union
+from typing import Tuple, Callable, Any, Union
 
 import numpy as np
 import torch
-from ding.envs import BaseEnv
 from easydict import EasyDict
 
 from zoo.graphs.envs.alphazx_env import AlphaZXEnv
@@ -226,9 +225,8 @@ class MCTS(object):
         # ==============================================================
         # sampled related core code
         # ==============================================================
-        self.action_space_size = self._cfg.action_space_size
+        print('ptree_alphazx.cfg = ', self._cfg)
         self.num_of_sampled_actions = self._cfg.num_of_sampled_actions
-        self.continuous_action_space = self._cfg.continuous_action_space
 
         # The maximum number of moves allowed in a game.
         self._max_moves = self._cfg.get('max_moves', 512)  # for chess and shogi, 722 for Go.

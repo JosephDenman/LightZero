@@ -1,6 +1,7 @@
 import logging
 import os
 from functools import partial
+from inspect import trace
 from typing import Optional, Tuple
 
 import torch
@@ -49,7 +50,7 @@ def train_alphazx(
         cfg.policy.device = 'cuda'
     else:
         cfg.policy.device = 'cpu'
-
+    print('train_alphazx')
     cfg = compile_config(cfg, seed=seed, env=None, auto=True, create_cfg=create_cfg, save_cfg=True)
     # Create main components: env, policy
     env_fn, collector_env_cfg, evaluator_env_cfg = get_vec_env_setting(cfg.env)

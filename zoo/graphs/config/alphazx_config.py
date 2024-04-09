@@ -17,10 +17,16 @@ mcts_ctree = False
 # end of the most frequently changed config specified by the user
 # ==============================================================
 alphazx_config = dict(
-    exp_name='data_alphazx_ptree/alphazx-mode_eval-by-rule-bot_seed0',
+    exp_name='data_alphazx_ptree/alphazx',
+    max_num_qubits=50,
+    max_circuit_depth=50,
+    t_gates=True,
+    max_num_new_edges=10,
+    num_phase_buckets=10,
+    done_reward=1.,
+    step_penalty=-1.,
     env=dict(
         battle_mode='self_play_mode',
-        bot_action_type='rule',
         channel_last=False,
         collector_env_num=collector_env_num,
         evaluator_env_num=evaluator_env_num,
@@ -46,14 +52,9 @@ alphazx_config = dict(
         simulation_env_id='alphazx',
         simulation_env_config_type='self_play',
         # ==============================================================
-        model=dict(
-            observation_shape='hdata',
-            action_space_size=5,
-            num_res_blocks=1,
-            num_channels=64,
-        ),
+        model=dict(),
         cuda=True,
-        env_type='graphs',
+        env_type='alphazx',
         action_type='varied_action_space',
         update_per_collect=update_per_collect,
         batch_size=batch_size,
@@ -65,7 +66,7 @@ alphazx_config = dict(
         entropy_weight=0.0,
         n_episode=n_episode,
         eval_freq=int(2e3),
-        mcts=dict(num_simulations=num_simulations),
+        mcts=dict(num_of_sampled_actions=50, num_simulations=num_simulations),
         collector_env_num=collector_env_num,
         evaluator_env_num=evaluator_env_num,
     ),

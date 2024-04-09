@@ -2,34 +2,37 @@ from typing import Tuple
 
 import torch
 import torch.nn as nn
+from ding.torch_utils import MLP
 from ding.utils import MODEL_REGISTRY
-
-from .common import RepresentationNetwork
 
 
 # use ModelRegistry to register the model, for more details about ModelRegistry, please refer to DI-engine's document.
 @MODEL_REGISTRY.register('AlphaZXModel')
 class AlphaZXModel(nn.Module):
 
-    def __init__(self, num_of_sampled_actions: int = 50):
+    def __init__(self):
         """
         Overview:
             The definition of AlphaZX model, which is a general model for AlphaZX algorithm.
         """
         super(AlphaZXModel, self).__init__()
-        self.num_of_sampled_actions = num_of_sampled_actions
 
         self.prediction_network = PredictionNetwork()
-
-        if self.representation_network is None:
-            self.representation_network = RepresentationNetwork()
-        else:
-            self.representation_network = self.representation_network
+        self.mlp = MLP(
+                in_channels=10,
+                out_channels=10,
+                hidden_channels=10,
+                layer_num=11,
+                activation=torch.nn.ELU(),
+                norm_type='LN',
+                output_activation=False,
+                output_norm=False
+            )
 
     def forward(self, state_batch: torch.Tensor) -> Tuple[dict[str, torch.Tensor], torch.Tensor]:
         """
         Overview:
-            The common computation graph of AlphaZero model.
+            The common computation graph of AlphaZX model.
         Arguments:
             - state_batch (:obj:`torch.Tensor`): The input state data, e.g. 2D image with the shape of [C, H, W].
         Returns:
@@ -46,7 +49,7 @@ class AlphaZXModel(nn.Module):
     def compute_policy_value(self, state_batch: torch.Tensor) -> Tuple[dict[str, torch.Tensor], torch.Tensor]:
         """
         Overview:
-            The computation graph of AlphaZero model to calculate action selection probability and value.
+            The computation graph of AlphaZX model to calculate action selection probability and value.
         Arguments:
             - state_batch (:obj:`torch.Tensor`): The input state data, e.g. 2D image with the shape of [C, H, W].
         Returns:

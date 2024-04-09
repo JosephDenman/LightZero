@@ -17,6 +17,13 @@ if __name__ == '__main__':
     main_config.env.agent_vs_human = False
     main_config.env.battle_mode = 'eval_mode'
     main_config.env.render_mode = 'image_realtime_mode'
+    main_config.max_num_qubits = 50
+    main_config.max_circuit_depth = 50,
+    main_config.t_gates = True,
+    main_config.max_num_new_edges = 10,
+    main_config.num_phase_buckets = 10,
+    main_config.done_reward = 1.,
+    main_config.step_penalty = -1.,
     create_config.env_manager.type = 'base'
     main_config.env.collector_env_num = 1
     main_config.env.evaluator_env_num = 1

@@ -1,4 +1,5 @@
 import copy
+from inspect import trace
 from typing import Any, Optional, Tuple
 
 import networkx as nx
@@ -7,13 +8,16 @@ from alphazx.diagram.diagram_generators import clifford_zx_diagram
 from alphazx.diagram.feature_conversions import cat_phase_to_float, cat_new_edges_to_int, \
     bernoulli_transfer_edges_to_set
 from alphazx.diagram.match import Match, FRightXMatch, FLeftXMatch, BRightMatch, BLeftMatch, YRightZMatch, YLeftZMatch, \
-    YRightXMatch, YLeftXMatch, FLeftZMatch, FRightZMatch
+    YRightXMatch, YLeftXMatch, FLeftZMatch, FRightZMatch, MATCH_TYPE_COUNT
 from alphazx.diagram.zx_match_diagram import to_zx_match_diagram, HeteroDataIndexToMatch
 from alphazx.game.zx_game import diagram_value, assert_correct_match_instance
 from alphazx.rewriting.util import rewrite, FRightParameters
 from ding.envs import BaseEnv
 from ding.utils import ENV_REGISTRY
 from easydict import EasyDict
+from gym import spaces
+
+from zoo.graphs.envs.sequence_space import Sequence
 
 
 @ENV_REGISTRY.register('alphazx')
@@ -32,13 +36,21 @@ class AlphaZXEnv(BaseEnv):
         # (str) The name of the environment registered in the environment registry.
         env_id="alphazx",
         # (int) The maximum number of qubits in the initial graph.
-        max_qubits=50,
+        max_num_qubits=50,
         # (int) The maximum gate depth of the initial graph.
-        max_depth=50,
+        max_circuit_depth=50,
+        # (bool) Whether to include T-gates in the initial graph.
+        t_gates=True,
+        # (int) The maximum number of new edges generated in a fission action.
+        max_num_new_edges=10,
+        # (int) The number of phase buckets used to discretize the phase space.
+        num_phase_buckets=10,
+        # (float) The reward for completely simplifying the graph.
+        done_reward=1.,
+        # (float) The penalty for each step taken.
+        step_penalty=-1.,
         # (str) The mode of the environment when take a step.
         battle_mode='self_play_mode',
-        # (str) The mode of the environment when doing the MCTS.
-        battle_mode_in_simulation_env='self_play_mode',  # only used in AlphaZero
         # (str) The render mode. Options are 'None', 'state_realtime_mode', 'image_realtime_mode' or 'image_savefile_mode'.
         # If None, then the game will not be rendered.
         render_mode=None,
@@ -50,28 +62,29 @@ class AlphaZXEnv(BaseEnv):
         channel_last=False,
         # (bool) Whether to scale the observation.
         scale=True,
-        # (bool) Whether to let human to play with the agent when evaluating. If False, then use the bot to evaluate the agent.
-        agent_vs_human=False,
         # (float) The probability that a random agent is used instead of the learning agent.
         prob_random_agent=0,
-        # (float) The probability that a random action will be taken when calling the bot.
-        prob_random_action_in_bot=0.,
         # (bool) Whether to use the MCTS ctree in AlphaZX. If True, then the AlphaZero MCTS ctree will be used.
         alphazx_mcts_ctree=False,
     )
 
-    done = False
-
     def __init__(self, cfg: dict = None):
         self._cfg = cfg
-        self.num_qubits = cfg.num_qubits
-        self.depth = cfg.depth
+        self.max_num_qubits = cfg.max_num_qubits
+        self.max_circuit_depth = cfg.max_circuit_depth
         self.t_gates = cfg.t_gates
+        self.max_num_new_edges = cfg.max_num_new_edges
+        self.num_phase_buckets = cfg.num_phase_buckets
         self.done_reward = cfg.done_reward
         self.step_penalty = cfg.step_penalty
         self._seed = None
         self._dynamic_seed = None
-        self.zx_diagram = clifford_zx_diagram(self.num_qubits, self.depth, self.t_gates)
+        # TODO: For some reason, 'Tuple' and 'MultiDiscrete' aren't node feature space options, so we have to encode node features as a single 'Discrete'.
+        self._observation_space = spaces.Graph(spaces.Discrete(MATCH_TYPE_COUNT * (4 if self.t_gates else 2)), spaces.Discrete(2))
+        self._action_space = spaces.Tuple([spaces.Discrete(MATCH_TYPE_COUNT), spaces.Discrete(self.num_phase_buckets), spaces.Discrete(self.max_num_new_edges), Sequence(spaces.Discrete(2))])
+        self._reward_space = spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
+        # TODO: Randomly select 'num_qubits' and 'depth' based on 'max_qubits' and 'max_depth'
+        self.zx_diagram = clifford_zx_diagram(self.max_num_qubits, self.max_circuit_depth, self.t_gates)
         self.zx_match_diagram = to_zx_match_diagram(self.zx_diagram)
         self.hdata_node_index: Optional[HeteroDataIndexToMatch] = None
         self.previous_value = diagram_value(self.zx_diagram)
@@ -79,6 +92,25 @@ class AlphaZXEnv(BaseEnv):
         self.episode_length = 0
         self.done = False
         self.previous_reward = 0
+
+    @property
+    def observation_space(self):
+        return self._observation_space
+
+    @property
+    def action_space(self):
+        return self._action_space
+
+    @property
+    def reward_space(self):
+        return self._reward_space
+
+    def current_state(self):
+        hdata, hdata_node_index = self.zx_match_diagram.to_pyg_hdata(True)
+        self.hdata_node_index = hdata_node_index
+        # TODO: Second return value should be scaled version of first.
+        # TODO: Should we be returning 'x_dict' and 'edge_index_dict' instead?
+        return hdata, hdata
 
     def __remove_isolated_nodes(self) -> None:
         self.zx_diagram.remove_nodes_from(list(nx.isolates(self.zx_diagram)))
@@ -102,7 +134,7 @@ class AlphaZXEnv(BaseEnv):
         return num_non_zero_phases == 0
 
     def reset(self) -> Any:
-        self.zx_diagram = clifford_zx_diagram(self.num_qubits, self.depth, self.t_gates)
+        self.zx_diagram = clifford_zx_diagram(self.max_num_qubits, self.max_circuit_depth, self.t_gates)
         self.zx_match_diagram = to_zx_match_diagram(self.zx_diagram)
         self.previous_value = diagram_value(self.zx_diagram)
         self.episode_return = 0
