@@ -6,8 +6,10 @@ import torch.nn.functional as F
 import torch_geometric as pyg
 from alphazx.diagram.match import METADATA, NODE_METADATA
 from ding.utils import MODEL_REGISTRY
+from torch import Tensor
 from torch_geometric.nn import HGTConv
-from torch_geometric.typing import NodeType, Metadata, EdgeType
+from torch_geometric.typing import NodeType, Metadata, EdgeType, Adj
+from torch_geometric.utils import is_sparse
 
 
 def stack_feat_dict(x_dict: Dict[NodeType, torch.Tensor], include_offsets: bool = True) -> Union[
@@ -203,6 +205,25 @@ class ValueNetwork(nn.Module):
         return h
 
 
+class EdgeAttentionConv(pyg.nn.MessagePassing):
+    def __init__(self):
+        super(EdgeAttentionConv, self).__init__()
+
+    def message_and_aggregate(self, adj_t: Adj) -> Tensor:
+        if is_sparse(adj_t):
+            raise Exception('SparseTensor not supported')
+
+    def edge_update(self) -> Tensor:
+        r"""Computes or updates features for each edge in the graph.
+        This function can take any argument as input which was initially passed
+        to :meth:`edge_updater`.
+        Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
+        the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        """
+        raise NotImplementedError
+
+
 class PolicyNetwork(nn.Module):
     def __init__(self,
                  input_dim: int,
@@ -229,6 +250,9 @@ class PolicyNetwork(nn.Module):
                 x_dict: Dict[NodeType, torch.Tensor],
                 edge_index_dict: Dict[EdgeType, torch.Tensor]) -> AZXDistParams:
         x_dict = self.node_encoder(x_dict, edge_index_dict)
+        # TODO: We likely want to avoid a message-passing GCN here, since they only consider the graph structure. We likely want graph
+        #       attention. One question is whether we want to consider the entire graph structure or just the subgraph
+        #       of the primitive nodes.
         return x_dict
 
 
@@ -332,7 +356,8 @@ class AlphaZXModel(nn.Module):
         super(AlphaZXModel, self).__init__()
         self.representation_network = RepresentationNetwork(input_dim, representation_hidden_dim, embed_dim,
                                                             representation_attn_heads, representation_layers)
-        self.prediction_network = PredictionNetwork(embed_dim, value_hgt_hidden_dim,
+        self.prediction_network = PredictionNetwork(embed_dim,
+                                                    value_hgt_hidden_dim,
                                                     value_hgt_out_dim,
                                                     value_hgt_heads,
                                                     value_hgt_layers,
